@@ -21,7 +21,7 @@ it('merges tenant data over base connection and returns fixed name', function ()
         'prefix' => '',
     ];
 
-    $cfg = $resolver->buildConnectionConfig($tenant, $base);
+    $cfg = $resolver->buildConnectionConfig($tenant, $base, $tenant->data);
 
     expect($cfg['database'])->toBe(':memory:')
         ->and($cfg['driver'])->toBe('sqlite')
