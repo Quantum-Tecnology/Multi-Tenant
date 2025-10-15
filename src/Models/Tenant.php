@@ -6,10 +6,11 @@ namespace QuantumTecnology\Tenant\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Stancl\VirtualColumn\VirtualColumn;
 
 final class Tenant extends Model
 {
-    use HasUlids;
+    use HasUlids, VirtualColumn;
 
     protected $fillable = [
         'name',
