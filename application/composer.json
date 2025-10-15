@@ -12,7 +12,7 @@
         "php": "^8.4.0",
         "laravel/framework": "^12.34.0",
         "nunomaduro/essentials": "^1.0.1",
-        "quantumtecnology/tenant": "*"
+        "quantumtecnology/tenant": "dev-main"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1.0",
@@ -126,7 +126,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../package",
+            "url": "../",
             "options": {
                 "symlink": true
             }

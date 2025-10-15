@@ -20,7 +20,7 @@ final class RollbackTenantJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(private Tenant $tenant, public string $step)
+    public function __construct(public Tenant $tenant, public string $step)
     {
         //
     }
@@ -46,6 +46,9 @@ final class RollbackTenantJob implements ShouldQueue
 
             logger("↩️ Rollback feito em {$this->tenant->id} on the step {$this->step}");
         } catch (Throwable $e) {
+            // Ensure we are back on the central connection before recording the failure
+            $manager->disconnect();
+
             logger()->error("⚠️ Falha ao reverter {$this->tenant->id}: {$e->getMessage()}");
 
             DB::table('tenant_migrations_progress')->insert([

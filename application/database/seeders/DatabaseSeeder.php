@@ -5,34 +5,29 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Tenant;
 use Illuminate\Database\Seeder;
+use QuantumTecnology\Tenant\Models\Tenant;
 
 final class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        Tenant::factory()->create([
-            'domain' => '127.0.0.1',
-            'data' => [
-                'database' => 'multitenant_demo'
-            ],
-        ]);
-
-        Tenant::factory()->create([
-            'id' => '01k7m0ngt49hscpqar742qqkaa',
+        Tenant::create([
+            'name' => 'Default Tenant',
             'domain' => 'localhost',
-            'data' => [
-                'database' => 'multitenant_demo2'
-            ],
+            'database' => 'multitenant_demo'
         ]);
 
-        Tenant::factory()->create([
-            'id' => '01k7m0ngtct1f7k3zdw8p2t66s',
+        Tenant::create([
+            'name' => 'Second Tenant',
+            'domain' => '127.0.0.1',
+            'database' => 'multitenant_demo2'
+        ]);
+
+        Tenant::create([
+            'name' => 'Third Tenant',
             'domain' => 'testing',
-            'data' => [
-                'database' => 'multitenant_demo3'
-            ],
+            'database' => 'multitenant_demo3'
         ]);
     }
 }

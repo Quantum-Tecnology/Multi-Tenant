@@ -11,6 +11,18 @@ use Stancl\VirtualColumn\VirtualColumn;
 final class Tenant extends Model
 {
     use HasUlids, VirtualColumn;
-    
-    public $guarded = [];
+
+    protected $table = 'tenants';
+    protected $primaryKey = 'id';
+    protected $guarded = [];
+
+    public function getTenantKeyName(): string
+    {
+        return 'id';
+    }
+
+    public function getTenantKey(): int|string
+    {
+        return $this->getAttribute($this->getTenantKeyName());
+    }
 }
