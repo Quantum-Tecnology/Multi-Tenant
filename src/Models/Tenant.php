@@ -11,13 +11,6 @@ use Stancl\VirtualColumn\VirtualColumn;
 final class Tenant extends Model
 {
     use HasUlids, VirtualColumn;
-
-    protected $fillable = [
-        'name',
-        'data',
-    ];
-
-    protected $casts = [
-        'data' => 'array',
-    ];
+    
+    public $guarded = [];
 }
