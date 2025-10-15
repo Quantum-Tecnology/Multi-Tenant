@@ -16,7 +16,7 @@ final class RollbackBatchJob implements ShouldQueue
 
     public function __construct(readonly private array $successfulTenants)
     {
-        //
+        $this->onQueue(config('tenant.queue.connection'));
     }
 
     public function handle(): void

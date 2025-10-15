@@ -22,7 +22,7 @@ final class RollbackTenantJob implements ShouldQueue
 
     public function __construct(public Tenant $tenant, public string $step)
     {
-        //
+        $this->onQueue(config('tenant.queue.connection'));
     }
 
     public function handle(TenantManager $manager): void

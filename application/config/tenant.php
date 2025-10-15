@@ -10,4 +10,7 @@ return [
     'table' => [
         'progress' => env('TENANT_TABLE_PROGRESS', 'tenant_migrations_progress'),
     ],
+    'queue' => [
+        'connection' => env('TENANT_QUEUE_CONNECTION', 'default'),
+    ]
 ];

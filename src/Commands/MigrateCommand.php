@@ -76,6 +76,7 @@ final class MigrateCommand extends Command
                     logger(__('🏁 Migration process finished.'));
                 }
             })
+            ->onQueue(config('tenant.queue.connection'))
             ->dispatch();
 
         $this->info(__('🚀 Batch started. ID: :id', ['id' => $batch->id]));
