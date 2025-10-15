@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\TenantManager;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
 
 final class TenantServiceProvider extends ServiceProvider
 {
