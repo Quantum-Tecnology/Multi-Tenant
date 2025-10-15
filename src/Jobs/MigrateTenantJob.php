@@ -38,7 +38,7 @@ final class MigrateTenantJob implements ShouldQueue
 
         $manager->disconnect();
 
-        DB::table('tenant_migrations_progress')->insert([
+        DB::table(config('tenant.table.progress'))->insert([
             'tenant_id' => $this->tenant->id,
             'batch_id' => $this->batch()?->id ?? 'manual',
             'status' => StatusEnum::PENDING->value,
@@ -72,7 +72,7 @@ final class MigrateTenantJob implements ShouldQueue
 
             logger("✅ Migração concluída no tenant {$this->tenant->id}");
 
-            DB::table('tenant_migrations_progress')->where([
+            DB::table(config('tenant.table.progress'))->where([
                 'tenant_id' => $this->tenant->id,
                 'batch_id' => $this->batch()?->id ?? 'manual',
             ])->update([
@@ -84,7 +84,7 @@ final class MigrateTenantJob implements ShouldQueue
             $manager->disconnect();
             logger()->error("❌ Falha ao migrar tenant {$this->tenant->id}: {$e->getMessage()}");
 
-            DB::table('tenant_migrations_progress')->where([
+            DB::table(config('tenant.table.progress'))->where([
                 'tenant_id' => $this->tenant->id,
                 'batch_id' => $this->batch()?->id ?? 'manual',
             ])->update([

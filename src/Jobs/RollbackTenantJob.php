@@ -51,7 +51,7 @@ final class RollbackTenantJob implements ShouldQueue
 
             logger()->error("⚠️ Falha ao reverter {$this->tenant->id}: {$e->getMessage()}");
 
-            DB::table('tenant_migrations_progress')->insert([
+            DB::table(config('tenant.table.progress'))->insert([
                 'tenant_id' => $this->tenant->id,
                 'batch_id' => 'by-job',
                 'status' => StatusEnum::ERROR_ON_ROLLBACK->value,

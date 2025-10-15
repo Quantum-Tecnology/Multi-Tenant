@@ -55,13 +55,13 @@ final class MigrateCommand extends Command
                 logger(__('✅ Batch completed successfully.'));
             })
             ->finally(function (Batch $batch): void {
-                $exist = DB::table('tenant_migrations_progress')
+                $exist = DB::table(config('tenant.table.progress'))
                     ->where('batch_id', $batch->id)
                     ->where('status', StatusEnum::ERROR->value)
                     ->exists();
 
                 if ($exist) {
-                    $successful = DB::table('tenant_migrations_progress')
+                    $successful = DB::table(config('tenant.table.progress'))
                         ->where('batch_id', $batch->id)
                         ->pluck('last_batch', 'tenant_id')
                         ->toArray();
