@@ -11,11 +11,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-readonly final class RollbackBatchJob implements ShouldQueue
+final class RollbackBatchJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(private array $successfulTenants)
+    public function __construct(readonly private array $successfulTenants)
     {
         //
     }
