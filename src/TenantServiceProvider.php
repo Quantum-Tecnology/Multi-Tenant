@@ -22,11 +22,12 @@ final class TenantServiceProvider extends ServiceProvider
         );
 
         $this->loadMigrationsFrom(__DIR__.'/../Migrations');
-
     }
 
     public function boot(): void
     {
+        $this->registerCommands();
+
         // Injetar tenant_id no payload
         Queue::createPayloadUsing(function ($connection, $queue, array $payload): array {
             $tenant = app(TenantManager::class)->getTenant();
@@ -48,5 +49,16 @@ final class TenantServiceProvider extends ServiceProvider
                 }
             }
         });
+    }
+
+    private function registerCommands(): void
+    {
+        if (! $this->app->runningInConsole()) {
+            return;
+        }
+
+        $this->commands([
+            Commands\MigrateCommand::class,
+        ]);
     }
 }
