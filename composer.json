@@ -75,7 +75,8 @@
     "test": [
       "Composer\\Config::disableProcessTimeout",
       "@test:unit",
-      "@test:lint"
+      "@test:lint",
+      "test:types"
     ]
   }
 }

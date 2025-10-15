@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Models\Tenant;
@@ -56,13 +57,13 @@ final class MigrateTenantJob implements ShouldQueue
             ];
 
             if ($this->fresh) {
-                \Illuminate\Support\Facades\Artisan::call('migrate:fresh', $params);
+                Artisan::call('migrate:fresh', $params);
             } else {
-                \Illuminate\Support\Facades\Artisan::call('migrate', $params);
+                Artisan::call('migrate', $params);
             }
 
             if ($this->seed) {
-                \Illuminate\Support\Facades\Artisan::call('db:seed', [
+                Artisan::call('db:seed', [
                     'class' => 'TenantSeeder',
                 ]);
             }
