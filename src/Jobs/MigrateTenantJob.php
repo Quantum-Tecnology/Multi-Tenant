@@ -69,7 +69,7 @@ final class MigrateTenantJob implements ShouldQueue
 
             $manager->disconnect();
 
-            logger("✅ Migração concluída no tenant {$this->tenant->name}");
+            logger("✅ Migração concluída no tenant {$this->tenant->id}");
 
             DB::table('tenant_migrations_progress')->where([
                 'tenant_id' => $this->tenant->id,
@@ -81,7 +81,7 @@ final class MigrateTenantJob implements ShouldQueue
 
         } catch (Throwable $e) {
             $manager->disconnect();
-            logger()->error("❌ Falha ao migrar tenant {$this->tenant->name}: {$e->getMessage()}");
+            logger()->error("❌ Falha ao migrar tenant {$this->tenant->id}: {$e->getMessage()}");
 
             DB::table('tenant_migrations_progress')->where([
                 'tenant_id' => $this->tenant->id,

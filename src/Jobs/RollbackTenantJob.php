@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Models\Tenant;
@@ -36,16 +37,16 @@ final class RollbackTenantJob implements ShouldQueue
 
         try {
             foreach ($paths as $migration) {
-                \Illuminate\Support\Facades\Artisan::call('migrate:rollback', [
+                Artisan::call('migrate:rollback', [
                     '--database' => 'tenant',
                     '--path' => "database/migrations/tenant/{$migration}.php",
                     '--force' => true,
                 ]);
             }
 
-            logger("↩️ Rollback feito em {$this->tenant->name} on the step {$this->step}");
+            logger("↩️ Rollback feito em {$this->tenant->id} on the step {$this->step}");
         } catch (Throwable $e) {
-            logger()->error("⚠️ Falha ao reverter {$this->tenant->name}: {$e->getMessage()}");
+            logger()->error("⚠️ Falha ao reverter {$this->tenant->id}: {$e->getMessage()}");
 
             DB::table('tenant_migrations_progress')->insert([
                 'tenant_id' => $this->tenant->id,

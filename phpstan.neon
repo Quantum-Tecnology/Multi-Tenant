@@ -8,6 +8,6 @@ parameters:
     paths:
         - src
 
-    level: 1
+    level: 2
 
     tmpDir: /tmp/phpstan
