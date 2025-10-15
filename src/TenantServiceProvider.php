@@ -21,13 +21,18 @@ final class TenantServiceProvider extends ServiceProvider
             'tenant'
         );
 
-        $this->loadMigrationsFrom(__DIR__.'/../Migrations');
+        $this->publishes([
+            __DIR__.'/../../config/tenant.php' => config_path('tenant.php'),
+        ], 'tenant-config');
+
+        $this->publishes([
+            __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('create_tenants_table.php'),
+            __DIR__.'/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
+        ], 'permission-migrations');
     }
 
     public function boot(): void
     {
-        $this->registerCommands();
-
         // Injetar tenant_id no payload
         Queue::createPayloadUsing(function ($connection, $queue, array $payload): array {
             $tenant = app(TenantManager::class)->getTenant();
@@ -60,5 +65,17 @@ final class TenantServiceProvider extends ServiceProvider
         $this->commands([
             Commands\MigrateCommand::class,
         ]);
+    }
+
+    protected function getMigrationFileName(string $migrationFileName): string
+    {
+        $timestamp = date('Y_m_d_His');
+
+        $filesystem = $this->app->make(Filesystem::class);
+
+        return Collection::make([$this->app->databasePath().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR])
+            ->flatMap(fn ($path) => $filesystem->glob($path.'*_'.$migrationFileName))
+            ->push($this->app->databasePath()."/migrations/{$timestamp}_{$migrationFileName}")
+            ->first();
     }
 }
