@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace QuantumTecnology\Tenant\Jobs;
 
-use App\Models\Tenant;
+use QuantumTecnology\Tenant\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-final class RollbackBatchJob implements ShouldQueue
+readonly final class RollbackBatchJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

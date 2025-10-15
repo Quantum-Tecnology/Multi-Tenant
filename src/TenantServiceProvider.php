@@ -17,7 +17,7 @@ final class TenantServiceProvider extends ServiceProvider
         $this->app->singletonIf(TenantManager::class, fn ($app): TenantManager => new TenantManager());
 
         $this->mergeConfigFrom(
-            __DIR__.'/Config/tenant.php',
+            __DIR__.'/../config/tenant.php',
             'tenant'
         );
 

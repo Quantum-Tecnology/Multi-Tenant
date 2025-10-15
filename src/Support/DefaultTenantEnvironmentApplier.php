@@ -4,18 +4,33 @@ declare(strict_types=1);
 
 namespace QuantumTecnology\Tenant\Support;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use QuantumTecnology\Tenant\Contracts\TenantEnvironmentApplier;
 use QuantumTecnology\Tenant\Models\Tenant;
 
 final class DefaultTenantEnvironmentApplier implements TenantEnvironmentApplier
 {
+    private ?string $originalCachePrefix = null;
+    private ?string $originalRedisPrefix = null;
+
     public function apply(Tenant $tenant, string $connectionName): void
     {
-        $prefix = when(config('cache.prefix'), fn (): string => config('cache.prefix').'_');
-        if (in_array(config('cache.default'), ['redis', 'database'], true)) {
-            Cache::setPrefix($prefix.$tenant->id.':');
+        // Remember original prefixes so we can restore them in reset()
+        $this->originalCachePrefix = (string) config('cache.prefix', '');
+        $this->originalRedisPrefix = (string) config('database.redis.options.prefix', '');
+
+        $basePrefix = (string) $this->originalCachePrefix;
+        if ($basePrefix !== '') {
+            $basePrefix .= '_';
+        }
+        $tenantPrefix = $basePrefix.$tenant->id;
+
+        // Set cache prefix used by most stores
+        Config::set('cache.prefix', $tenantPrefix);
+
+        // Additionally, for redis, set the low-level redis prefix too
+        if (config('cache.default') === 'redis') {
+            Config::set('database.redis.options.prefix', $tenantPrefix.':');
         }
 
         app()->instance('tenant', $tenant);
@@ -25,9 +40,11 @@ final class DefaultTenantEnvironmentApplier implements TenantEnvironmentApplier
     {
         app()->forgetInstance('tenant');
 
-        Config::set('cache.prefix', env('CACHE_PREFIX', 'laravel_cache'));
-        if (config('cache.default') === 'redis') {
-            Config::set('database.redis.options.prefix', env('REDIS_PREFIX', ''));
+        if ($this->originalCachePrefix !== null) {
+            Config::set('cache.prefix', $this->originalCachePrefix);
+        }
+        if ($this->originalRedisPrefix !== null) {
+            Config::set('database.redis.options.prefix', $this->originalRedisPrefix);
         }
     }
 }
