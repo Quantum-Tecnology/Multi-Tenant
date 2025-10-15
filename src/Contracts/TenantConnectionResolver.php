@@ -20,7 +20,7 @@ interface TenantConnectionResolver
      * @param  array<string, mixed>  $baseConnection  The base/default connection config (e.g., from config('database.connections.mysql'))
      * @return array<string, mixed>
      */
-    public function buildConnectionConfig(Tenant $tenant, array $baseConnection): array;
+    public function buildConnectionConfig(Tenant $tenant, array $baseConnection, array $dataTenant): array;
 
     /**
      * The name of the connection that should be registered for tenants.

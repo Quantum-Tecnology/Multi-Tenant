@@ -17,9 +17,9 @@ final class DefaultTenantConnectionResolver implements TenantConnectionResolver
      * @param  array<string, mixed>  $baseConnection
      * @return array<string, mixed>
      */
-    public function buildConnectionConfig(Tenant $tenant, array $baseConnection): array
+    public function buildConnectionConfig(Tenant $tenant, array $baseConnection, array $dataTenant): array
     {
-        return array_merge($baseConnection, $tenant->data ?? []);
+        return array_merge($baseConnection, $dataTenant);
     }
 
     public function connectionName(Tenant $tenant): string
