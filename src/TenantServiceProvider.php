@@ -28,7 +28,7 @@ final class TenantServiceProvider extends ServiceProvider
         ], 'tenant-config');
 
         $this->publishes([
-            __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => '0000_00_00_000000_create_tenants_table.php',
+            __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('0000_00_00_000000_create_tenants_table.php', false),
             __DIR__.'/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
         ], 'tenant-migrations');
     }
@@ -69,15 +69,15 @@ final class TenantServiceProvider extends ServiceProvider
         ]);
     }
 
-    protected function getMigrationFileName(string $migrationFileName): string
+    protected function getMigrationFileName(string $migrationFileName, $timestamp = true): string
     {
-        $timestamp = date('Y_m_d_His');
+        $timestamp = when($timestamp, fn() => date('Y_m_d_His') . '_');
 
         $filesystem = $this->app->make(Filesystem::class);
 
         return Collection::make([$this->app->databasePath().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR])
             ->flatMap(fn ($path) => $filesystem->glob($path.'*_'.$migrationFileName))
-            ->push($this->app->databasePath()."/migrations/{$timestamp}_{$migrationFileName}")
+            ->push($this->app->databasePath()."/migrations/{$timestamp}{$migrationFileName}")
             ->first();
     }
 }
