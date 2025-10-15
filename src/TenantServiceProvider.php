@@ -28,7 +28,7 @@ final class TenantServiceProvider extends ServiceProvider
         ], 'tenant-config');
 
         $this->publishes([
-            __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('create_tenants_table.php'),
+            __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => '0000_00_00_000000_create_tenants_table.php',
             __DIR__.'/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
         ], 'tenant-migrations');
     }
