@@ -1,0 +1,81 @@
+{
+  "name": "quantumtecnology/tenant",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "http://www.gustavosantarosa.esy.es/",
+  "description": "Service Basics Extension",
+  "require": {
+    "php": "^8.2",
+    "laravel/framework": "^10.0 | ^11.0| ^12.34"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^10.6",
+    "driftingly/rector-laravel": "^2.1",
+    "rector/rector": "^2.2.3",
+    "laravel/pint": "^1.25.1",
+    "larastan/larastan": "^3.7.2",
+    "pestphp/pest": "^4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "QuantumTecnology\\Tenant\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Bruno Costa",
+      "email": "bhcosta90@gmail.com"
+    }
+  ],
+  "support": {
+    "email": "bhcosta90@gmail.com"
+  },
+  "minimum-stability": "stable",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "QuantumTecnology\\ServiceBasicsExtension\\TenantServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true,
+      "pestphp/pest-plugin": true
+    }
+  },
+  "scripts": {
+    "post-update-cmd": [
+      "@update:requirements"
+    ],
+    "lint": [
+      "rector",
+      "pint --parallel",
+      "rector",
+      "pint --parallel",
+      "rector",
+      "pint --parallel"
+    ],
+    "update:requirements": [
+      "composer bump"
+    ],
+    "test:type-coverage": "pest --type-coverage --min=100",
+    "test:lint": [
+      "pint --parallel --test",
+      "rector --dry-run"
+    ],
+    "test:unit": "pest --parallel --coverage",
+    "test:unit-coverage": "pest --parallel --coverage --exactly=100.0",
+    "test:types": "phpstan",
+    "test": [
+      "Composer\\Config::disableProcessTimeout",
+      "@test:unit",
+      "@test:lint"
+    ]
+  }
+}
