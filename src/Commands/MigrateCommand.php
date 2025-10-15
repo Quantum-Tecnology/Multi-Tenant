@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Jobs\MigrateTenantJob;
 use QuantumTecnology\Tenant\Jobs\RollbackBatchJob;
-use QuantumTecnology\Tenant\Models\Tenant;
 use Throwable;
 
 final class MigrateCommand extends Command
@@ -30,9 +29,11 @@ final class MigrateCommand extends Command
     {
         $tenantId = $this->option('tenant_id');
 
-        $query = Tenant::query();
+        $model = config('tenant.model');
+        $query = $model::query();
         if ($tenantId) {
-            $query->where('id', $tenantId);
+            $keyName = (new $model())->getTenantKeyName();
+            $query->where($keyName, $tenantId);
         }
 
         $tenants = $query->get();

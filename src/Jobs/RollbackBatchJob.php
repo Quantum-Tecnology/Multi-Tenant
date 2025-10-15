@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace QuantumTecnology\Tenant\Jobs;
 
-use QuantumTecnology\Tenant\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -24,8 +23,9 @@ final class RollbackBatchJob implements ShouldQueue
     {
         logger(__('⚠️ Batch failed, starting global rollback...'));
 
+        $model = config('tenant.model');
         foreach ($this->successfulTenants as $tenantId => $step) {
-            dispatch(new RollbackTenantJob(Tenant::find($tenantId), $step));
+            dispatch(new RollbackTenantJob($model::find($tenantId), $step));
         }
     }
 }

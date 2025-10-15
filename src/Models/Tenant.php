@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Stancl\VirtualColumn\VirtualColumn;
 
-final class Tenant extends Model
+class Tenant extends Model
 {
     use HasUlids, VirtualColumn;
 

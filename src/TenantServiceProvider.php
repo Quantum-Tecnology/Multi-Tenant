@@ -6,7 +6,6 @@ namespace QuantumTecnology\Tenant;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
-use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\TenantManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
@@ -50,7 +49,8 @@ final class TenantServiceProvider extends ServiceProvider
             $payload = $event->job->payload();
 
             if (isset($payload['tenant_id'])) {
-                $tenant = Tenant::query()->find($payload['tenant_id']);
+                $model = config('tenant.model');
+                $tenant = $model::query()->find($payload['tenant_id']);
                 if ($tenant) {
                     app(TenantManager::class)->switchTo($tenant);
                 }
