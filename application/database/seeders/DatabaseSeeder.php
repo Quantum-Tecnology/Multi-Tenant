@@ -6,7 +6,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use QuantumTecnology\Tenant\Models\Tenant;
+use App\Models\Tenant;
 
 final class DatabaseSeeder extends Seeder
 {

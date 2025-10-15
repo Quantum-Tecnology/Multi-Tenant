@@ -6,6 +6,7 @@ namespace QuantumTecnology\Tenant;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
+use QuantumTecnology\Tenant\Contracts\UniqueIdentifierInterface;
 use QuantumTecnology\Tenant\Support\TenantManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
@@ -23,13 +24,17 @@ final class TenantServiceProvider extends ServiceProvider
         );
 
         $this->publishes([
-            __DIR__.'/../../config/tenant.php' => config_path('tenant.php'),
+            __DIR__.'/../config/tenant.php' => config_path('tenant.php'),
         ], 'tenant-config');
 
         $this->publishes([
             __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('0000_00_00_000000_create_tenants_table.php', false),
             __DIR__.'/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
         ], 'tenant-migrations');
+
+        if (! is_null(config('tenant.model.id_generator'))) {
+            $this->app->singletonIf(UniqueIdentifierInterface::class, config('tenant.model.id_generator'));
+        }
     }
 
     public function boot(): void
@@ -49,7 +54,7 @@ final class TenantServiceProvider extends ServiceProvider
             $payload = $event->job->payload();
 
             if (isset($payload['tenant_id'])) {
-                $model = config('tenant.model');
+                $model = config('tenant.model.tenant');
                 $tenant = $model::query()->find($payload['tenant_id']);
                 if ($tenant) {
                     app(TenantManager::class)->switchTo($tenant);

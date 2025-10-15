@@ -29,7 +29,7 @@ final class MigrateCommand extends Command
     {
         $tenantId = $this->option('tenant_id');
 
-        $model = config('tenant.model');
+        $model = config('tenant.model.tenant');
         $query = $model::query();
         if ($tenantId) {
             $keyName = (new $model())->getTenantKeyName();

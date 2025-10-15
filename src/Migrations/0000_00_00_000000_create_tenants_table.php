@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tenants', function (Blueprint $table): void {
-            $table->ulid('id')->primary();
+            $table->uuid('id')->primary();
             $table->json('data');
             $table->timestamps();
         });

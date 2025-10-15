@@ -6,11 +6,12 @@ namespace QuantumTecnology\Tenant\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use QuantumTecnology\Tenant\Models\Concerns\GeneratesIds;
 use Stancl\VirtualColumn\VirtualColumn;
 
 class Tenant extends Model
 {
-    use HasUlids, VirtualColumn;
+    use VirtualColumn, GeneratesIds;
 
     protected $table = 'tenants';
     protected $primaryKey = 'id';
@@ -24,5 +25,10 @@ class Tenant extends Model
     public function getTenantKey(): int|string
     {
         return $this->getAttribute($this->getTenantKeyName());
+    }
+
+    public function getKeyType(): string
+    {
+        return $this->shouldGenerateId() ? 'string' : $this->keyType;
     }
 }

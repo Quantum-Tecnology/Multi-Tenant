@@ -23,7 +23,7 @@ final class RollbackBatchJob implements ShouldQueue
     {
         logger(__('⚠️ Batch failed, starting global rollback...'));
 
-        $model = config('tenant.model');
+        $model = config('tenant.model.tenant');
         foreach ($this->successfulTenants as $tenantId => $step) {
             dispatch(new RollbackTenantJob($model::find($tenantId), $step));
         }

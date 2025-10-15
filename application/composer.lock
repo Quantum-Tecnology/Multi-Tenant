@@ -2960,7 +2960,7 @@
             "dist": {
                 "type": "path",
                 "url": "..",
-                "reference": "bbeb1b7846b7ad05e090d92129cd69ad4358593a"
+                "reference": "cade6e2d8aa095ef127a92d049264d5fb833ed55"
             },
             "require": {
                 "illuminate/container": "^10.0|^11.0|^12.0",
@@ -2987,7 +2987,10 @@
             "autoload": {
                 "psr-4": {
                     "QuantumTecnology\\Tenant\\": "src/"
-                }
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
             },
             "autoload-dev": {
                 "psr-4": {
@@ -11691,7 +11694,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "quantumtecnology/tenant": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
