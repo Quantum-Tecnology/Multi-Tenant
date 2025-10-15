@@ -23,18 +23,11 @@ final class TenantServiceProvider extends ServiceProvider
             'tenant'
         );
 
-        $this->publishes([
-            __DIR__.'/../config/tenant.php' => config_path('tenant.php'),
-        ], 'tenant-config');
+        $this->configurePublishers();
 
-        $this->publishes([
-            __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('0000_00_00_000000_create_tenants_table.php', false),
-            __DIR__.'/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
-        ], 'tenant-migrations');
+        $this->configureGenerateId();
 
-        if (! is_null(config('tenant.model.id_generator'))) {
-            $this->app->singletonIf(UniqueIdentifierInterface::class, config('tenant.model.id_generator'));
-        }
+        $this->registerCommands();
     }
 
     public function boot(): void
@@ -61,6 +54,31 @@ final class TenantServiceProvider extends ServiceProvider
                 }
             }
         });
+    }
+
+    /**
+     * @return void
+     */
+    protected function configurePublishers(): void
+    {
+        $this->publishes([
+            __DIR__ . '/../config/tenant.php' => config_path('tenant.php'),
+        ], 'tenant-config');
+
+        $this->publishes([
+            __DIR__ . '/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('0000_00_00_000000_create_tenants_table.php', false),
+            __DIR__ . '/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
+        ], 'tenant-migrations');
+    }
+
+    /**
+     * @return void
+     */
+    protected function configureGenerateId(): void
+    {
+        if (!is_null(config('tenant.model.id_generator'))) {
+            $this->app->singletonIf(UniqueIdentifierInterface::class, config('tenant.model.id_generator'));
+        }
     }
 
     private function registerCommands(): void

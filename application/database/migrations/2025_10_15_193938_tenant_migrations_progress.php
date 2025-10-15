@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create(config('tenant.table.progress'), function (Blueprint $table): void {
             $table->id();
-            $table->foreignUlid('tenant_id')->constrained('tenants')->cascadeOnDelete();
+            $table->string('tenant_id')->index();
             $table->string('batch_id');
             $table->unsignedTinyInteger('status')->nullable();
             $table->text('data')->nullable();
