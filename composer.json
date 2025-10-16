@@ -1,5 +1,5 @@
 {
-  "name": "quantumtecnology/tenant",
+  "name": "quantumtecnology/multi-tenant",
   "type": "library",
   "license": "MIT",
   "homepage": "http://www.gustavosantarosa.esy.es/",
