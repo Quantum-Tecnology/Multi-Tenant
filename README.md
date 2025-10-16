@@ -79,6 +79,36 @@ Or resolve directly from the container:
 $tenant = app('tenant');
 ```
 
+### Switching to a specific tenant (programmatically)
+
+You can manually define the active tenant anywhere in your app using the TenantManager. This will reconfigure the database connection for the tenant and apply environment side-effects (like cache prefixes).
+
+```php
+use QuantumTecnology\Tenant\Support\TenantManager;
+
+// Resolve your Tenant model from config
+$model = config('tenant.model.tenant');
+
+// Locate the tenant you want to work with
+$tenant = $model::query()->firstWhere((new $model())->getTenantKeyName(), $tenantId);
+
+if ($tenant) {
+    // Switch the application context to this tenant
+    app(TenantManager::class)->switchTo($tenant);
+
+    // ... run your tenant-specific logic here ...
+    // e.g. models, DB, cache, etc., will use the tenant context
+
+    // Optionally, when finished, return to the central context
+    app(TenantManager::class)->disconnect();
+}
+```
+
+Notes:
+- In a long-running process, always disconnect when you no longer need the tenant context to avoid leaking state to subsequent operations.
+- In queued jobs, the package automatically propagates the tenant_id and reapplies the tenant before handling the job.
+- You can access the current tenant at any time via the tenant() helper or app('tenant').
+
 ## Running tenant migrations
 
 Command:
