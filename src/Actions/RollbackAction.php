@@ -39,7 +39,7 @@ final readonly class RollbackAction
                 ]);
             }
 
-            tenantLogAndPrint("↩️ Rollback feito em {$tenant->id} on the step {$step}", console: $console);
+            tenantLogAndPrint(__('↩️ Rollback completed on tenant :id at step :step', ['id' => $tenant->id, 'step' => $step]), console: $console);
         } catch (Throwable $e) {
             // Ensure we are back on the central connection before recording the failure
             $this->manager->disconnect();
@@ -54,7 +54,7 @@ final readonly class RollbackAction
                 'updated_at' => now(),
             ]);
 
-            tenantLogAndPrint("⚠️ Falha ao reverter {$tenant->id}: {$e->getMessage()}", 'error', $console);
+            tenantLogAndPrint(__('⚠️  Failed to rollback tenant :id: :message', ['id' => $tenant->id, 'message' => $e->getMessage()]), 'error', $console);
 
             throw $e;
         } finally {

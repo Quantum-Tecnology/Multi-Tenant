@@ -17,9 +17,9 @@ if (! function_exists('tenantLogAndPrint')) {
 
         if (app()->runningInConsole() && $console) {
             $color = match ($level) {
-                'error' => "\033[31m", // vermelho
-                'warning' => "\033[33m", // amarelo
-                'info' => "\033[32m", // verde
+                'error' => "\033[31m", // red
+                'warning' => "\033[33m", // yellow
+                'info' => "\033[32m", // green
                 default => "\033[0m",
             };
 

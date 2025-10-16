@@ -68,7 +68,7 @@ final readonly class MigrateAction
 
             $this->manager->disconnect();
 
-            tenantLogAndPrint("✅  Migração concluída no tenant {$tenant->id}", console: $console);
+            tenantLogAndPrint(__('✅  Migration completed on tenant :id', ['id' => $tenant->id]), console: $console);
 
             DB::table(config('tenant.table.progress'))->where([
                 'tenant_id' => $tenant->id,
@@ -80,7 +80,7 @@ final readonly class MigrateAction
 
         } catch (Throwable $e) {
             $this->manager->disconnect();
-            tenantLogAndPrint("❌  Falha ao migrar tenant {$tenant->id}: {$e->getMessage()}", 'error', $console);
+            tenantLogAndPrint(__('❌  Failed to migrate tenant :id: :message', ['id' => $tenant->id, 'message' => $e->getMessage()]), 'error', $console);
 
             DB::table(config('tenant.table.progress'))->where([
                 'tenant_id' => $tenant->id,
