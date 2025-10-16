@@ -109,6 +109,83 @@ Notes:
 - In queued jobs, the package automatically propagates the tenant_id and reapplies the tenant before handling the job.
 - You can access the current tenant at any time via the tenant() helper or app('tenant').
 
+### Identifying tenant via middleware
+
+You can identify and switch to the correct tenant per request using a middleware in your application. Below is a simple example that supports subdomain, header, or route parameter identification.
+
+Middleware example (App\Http\Middleware\IdentifyTenantMiddleware.php):
+
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use QuantumTecnology\Tenant\Support\TenantManager;
+
+class IdentifyTenantMiddleware
+{
+    public function handle(Request $request, Closure $next)
+    {
+        $model = config('tenant.model.tenant');
+
+        // Strategy 1: subdomain (e.g., {tenant}.your-app.com)
+        $subdomain = explode('.', $request->getHost())[0] ?? null;
+
+        // Strategy 2: header (e.g., X-Tenant-ID)
+        $headerId = $request->header('X-Tenant-ID');
+
+        // Strategy 3: route parameter (e.g., /tenants/{tenant}/dashboard)
+        $routeId = $request->route('tenant');
+
+        $keyName = (new $model())->getTenantKeyName();
+        $tenant = $model::query()
+            ->when($routeId, fn ($q) => $q->orWhere($keyName, $routeId))
+            ->when($headerId, fn ($q) => $q->orWhere($keyName, $headerId))
+            ->when($subdomain, fn ($q) => $q->orWhere('slug', $subdomain)) // assuming you have a 'slug' column
+            ->first();
+
+        if ($tenant) {
+            app(TenantManager::class)->switchTo($tenant);
+        }
+
+        try {
+            return $next($request);
+        } finally {
+            // Ensure we return to the central context after the request
+            app(TenantManager::class)->disconnect();
+        }
+    }
+}
+```
+
+Register the middleware in app/Http/Kernel.php:
+
+```php
+protected $middlewareAliases = [
+    // ...
+    'tenant' => \App\Http\Middleware\IdentifyTenantMiddleware::class,
+];
+```
+
+Apply the middleware to routes:
+
+```php
+// Single route
+Route::get('/dashboard', DashboardController::class)->middleware('tenant');
+
+// Or a route group
+Route::middleware(['tenant'])->group(function () {
+    Route::get('/reports', ReportsController::class);
+    Route::get('/invoices', InvoicesController::class);
+});
+```
+
+Notes:
+- Adjust the identification logic to your needs (e.g., only subdomain, only header, etc.).
+- For queued jobs triggered inside tenant routes, the tenant context is automatically propagated by the package.
+
 ## Running tenant migrations
 
 Command:
