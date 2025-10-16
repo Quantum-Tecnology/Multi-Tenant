@@ -35,10 +35,13 @@ jobs:
           git push origin "${version}.0"
 
           VERSION[1]=$((VERSION[1] + 1))
-          echo "${VERSION[0]}.${VERSION[1]}.${VERSION[2]}"
-          new_tag="${VERSION[0]}.${VERSION[1]}.${VERSION[2]}"
+          echo "${VERSION[0]}.${VERSION[1]}.0"
+          new_tag="${VERSION[0]}.${VERSION[1]}.0"
           echo "NEW_MINOR_TAG=$new_tag" >> $GITHUB_ENV
           echo "BRANCH_RELEASE=$branch_release" >> $GITHUB_ENV
+
+          git tag "new_tag"
+          git push origin "new_tag"
 
       - name: Create release branch and push new minor tag
         run: |
