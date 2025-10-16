@@ -27,7 +27,7 @@ trait GeneratesIds
         return ! $this->getIncrementing();
     }
 
-    public function getKeyType()
+    public function getKeyType(): string
     {
         return $this->shouldGenerateId() ? 'string' : $this->keyType;
     }

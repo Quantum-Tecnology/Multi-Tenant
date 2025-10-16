@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use QuantumTecnology\Tenant\Models\Concerns\GeneratesIds;
 use Stancl\VirtualColumn\VirtualColumn;
 
-class Tenant extends Model
+final class Tenant extends Model
 {
     use GeneratesIds, VirtualColumn;
 
@@ -26,10 +26,5 @@ class Tenant extends Model
     public function getTenantKey(): int|string
     {
         return $this->getAttribute($this->getTenantKeyName());
-    }
-
-    public function getKeyType(): string
-    {
-        return $this->shouldGenerateId() ? 'string' : $this->keyType;
     }
 }
