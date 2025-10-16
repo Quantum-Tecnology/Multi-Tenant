@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use QuantumTecnology\Tenant\Models\Concerns\GeneratesIds;
 use Stancl\VirtualColumn\VirtualColumn;
 
-final class Tenant extends Model
+class Tenant extends Model
 {
     use GeneratesIds, VirtualColumn;
 
