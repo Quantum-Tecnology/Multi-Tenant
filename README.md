@@ -22,7 +22,7 @@ Install via Composer:
 composer require quantumtecnology/multi-tenant
 ```
 
-The service provider is auto-discovered:
+The service provider is auto-discovered
 
 - QuantumTecnology\Tenant\TenantServiceProvider
 
