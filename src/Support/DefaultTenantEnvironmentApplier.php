@@ -11,6 +11,7 @@ use QuantumTecnology\Tenant\Models\Tenant;
 final class DefaultTenantEnvironmentApplier implements TenantEnvironmentApplier
 {
     private ?string $originalCachePrefix = null;
+
     private ?string $originalRedisPrefix = null;
 
     public function apply(Tenant $tenant, string $connectionName): void
@@ -19,7 +20,7 @@ final class DefaultTenantEnvironmentApplier implements TenantEnvironmentApplier
         $this->originalCachePrefix = (string) config('cache.prefix', '');
         $this->originalRedisPrefix = (string) config('database.redis.options.prefix', '');
 
-        $basePrefix = (string) $this->originalCachePrefix;
+        $basePrefix = $this->originalCachePrefix;
         if ($basePrefix !== '') {
             $basePrefix .= '_';
         }

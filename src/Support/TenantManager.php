@@ -34,10 +34,9 @@ final class TenantManager
 
         $base = config('database.connections.'.$this->originalDefault);
 
-        $connectionConfig = $this->resolver->buildConnectionConfig($tenant, $base, $tenant->getOriginal()['data'] ?? []);
+        $connectionConfig = $this->resolver->buildConnectionConfig($tenant, $base, $tenant->data ?? []);
         $connectionName = $this->resolver->connectionName($tenant);
 
-        logger($connectionConfig);
         Config::set('database.connections.'.$connectionName, $connectionConfig);
         DB::purge($connectionName);
         DB::reconnect($connectionName);

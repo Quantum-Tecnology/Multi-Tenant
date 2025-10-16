@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace QuantumTecnology\Tenant;
 
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use QuantumTecnology\Tenant\Contracts\UniqueIdentifierInterface;
 use QuantumTecnology\Tenant\Support\TenantManager;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Collection;
 
 final class TenantServiceProvider extends ServiceProvider
 {
@@ -56,27 +56,21 @@ final class TenantServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * @return void
-     */
-    protected function configurePublishers(): void
+    private function configurePublishers(): void
     {
         $this->publishes([
-            __DIR__ . '/../config/tenant.php' => config_path('tenant.php'),
+            __DIR__.'/../config/tenant.php' => config_path('tenant.php'),
         ], 'tenant-config');
 
         $this->publishes([
-            __DIR__ . '/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('0000_00_00_000000_create_tenants_table.php', false),
-            __DIR__ . '/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
+            __DIR__.'/Migrations/0000_00_00_000000_create_tenants_table.php' => $this->getMigrationFileName('0000_00_00_000000_create_tenants_table.php', false),
+            __DIR__.'/Migrations/0000_00_00_000000_tenant_migrations_progress.php' => $this->getMigrationFileName('tenant_migrations_progress.php'),
         ], 'tenant-migrations');
     }
 
-    /**
-     * @return void
-     */
-    protected function configureGenerateId(): void
+    private function configureGenerateId(): void
     {
-        if (!is_null(config('tenant.model.id_generator'))) {
+        if (! is_null(config('tenant.model.id_generator'))) {
             $this->app->singletonIf(UniqueIdentifierInterface::class, config('tenant.model.id_generator'));
         }
     }
@@ -92,9 +86,9 @@ final class TenantServiceProvider extends ServiceProvider
         ]);
     }
 
-    protected function getMigrationFileName(string $migrationFileName, $timestamp = true): string
+    private function getMigrationFileName(string $migrationFileName, bool $timestamp = true): string
     {
-        $timestamp = when($timestamp, fn() => date('Y_m_d_His') . '_');
+        $timestamp = when($timestamp, fn (): string => date('Y_m_d_His').'_');
 
         $filesystem = $this->app->make(Filesystem::class);
 

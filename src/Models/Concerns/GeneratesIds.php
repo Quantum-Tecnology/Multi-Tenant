@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace QuantumTecnology\Tenant\Models\Concerns;
 
 use QuantumTecnology\Tenant\Contracts\UniqueIdentifierInterface;
@@ -8,8 +10,8 @@ trait GeneratesIds
 {
     public static function bootGeneratesIds(): void
     {
-        static::creating(function (self $model) {
-            if (!$model->getKey() && $model->shouldGenerateId()) {
+        static::creating(function (self $model): void {
+            if (! $model->getKey() && $model->shouldGenerateId()) {
                 $model->setAttribute($model->getKeyName(), app(UniqueIdentifierInterface::class)->generate($model));
             }
         });

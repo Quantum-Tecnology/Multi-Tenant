@@ -1,9 +1,11 @@
 <?php
 
-use QuantumTecnology\Tenant\TenantServiceProvider;
-use QuantumTecnology\Tenant\Support\TenantManager;
+declare(strict_types=1);
 
-it('registers TenantManager as singleton and merges config', function () {
+use QuantumTecnology\Tenant\Support\TenantManager;
+use QuantumTecnology\Tenant\TenantServiceProvider;
+
+it('registers TenantManager as singleton and merges config', function (): void {
     $provider = new TenantServiceProvider(app());
     $provider->register();
 
@@ -15,7 +17,7 @@ it('registers TenantManager as singleton and merges config', function () {
         ->and(config('tenant.table.progress'))->toBe('tenant_migrations_progress');
 });
 
-it('boots without errors (queue hooks)', function () {
+it('boots without errors (queue hooks)', function (): void {
     $provider = new TenantServiceProvider(app());
     $provider->boot();
     expect(true)->toBeTrue();

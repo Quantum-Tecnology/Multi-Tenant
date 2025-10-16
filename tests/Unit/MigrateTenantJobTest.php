@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -9,16 +11,18 @@ use QuantumTecnology\Tenant\Jobs\MigrateTenantJob;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\TenantManager;
 
-function create_sqlite_file(string $name): string {
+function create_sqlite_file(string $name): string
+{
     $path = sys_get_temp_dir().DIRECTORY_SEPARATOR.$name;
     if (file_exists($path)) {
         @unlink($path);
     }
     touch($path);
+
     return $path;
 }
 
-it('runs tenant migration job and updates progress table to success', function () {
+it('runs tenant migration job and updates progress table to success', function (): void {
     // Configure central sqlite to a file
     $central = create_sqlite_file('central.sqlite');
     config()->set('database.default', 'sqlite');
@@ -29,7 +33,7 @@ it('runs tenant migration job and updates progress table to success', function (
     ]);
 
     // Central tables
-    Schema::create('tenant_migrations_progress', function ($table) {
+    Schema::create('tenant_migrations_progress', function ($table): void {
         $table->string('tenant_id');
         $table->string('batch_id');
         $table->integer('status');
@@ -59,7 +63,7 @@ it('runs tenant migration job and updates progress table to success', function (
         'prefix' => '',
     ]);
     DB::connection('tenant');
-    Schema::connection('tenant')->create(config('database.migrations.table', 'migrations'), function ($table) {
+    Schema::connection('tenant')->create(config('database.migrations.table', 'migrations'), function ($table): void {
         $table->increments('id');
         $table->string('migration');
         $table->integer('batch');
@@ -70,14 +74,30 @@ it('runs tenant migration job and updates progress table to success', function (
     ]);
 
     // Swap the Artisan facade root (Console Kernel) with a fake implementation to avoid mocking final classes
-    app()->instance(\Illuminate\Contracts\Console\Kernel::class, new class implements \Illuminate\Contracts\Console\Kernel {
-        public function handle($input, $output = null) {}
-        public function terminate($input, $status) {}
-        public function call($command, array $parameters = [], $outputBuffer = null) { return 0; }
-        public function queue($command, array $parameters = []) {}
-        public function all() { return []; }
-        public function output() { return ''; }
-        public function bootstrap() {}
+    app()->instance(Illuminate\Contracts\Console\Kernel::class, new class implements Illuminate\Contracts\Console\Kernel
+    {
+        public function handle($input, $output = null): void {}
+
+        public function terminate($input, $status): void {}
+
+        public function call($command, array $parameters = [], $outputBuffer = null)
+        {
+            return 0;
+        }
+
+        public function queue($command, array $parameters = []): void {}
+
+        public function all()
+        {
+            return [];
+        }
+
+        public function output()
+        {
+            return '';
+        }
+
+        public function bootstrap(): void {}
     });
 
     $job = new MigrateTenantJob($tenant, false, false);

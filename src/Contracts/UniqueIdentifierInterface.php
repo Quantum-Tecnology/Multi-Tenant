@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace QuantumTecnology\Tenant\Contracts;
 
 use Illuminate\Database\Eloquent\Model;

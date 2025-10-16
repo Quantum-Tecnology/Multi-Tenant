@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 use QuantumTecnology\Tenant\Models\Tenant;
 
-it('casts data to array and allows mass assignment of fillables', function () {
+it('casts data to array and allows mass assignment of fillables', function (): void {
     $tenant = new Tenant([
         'name' => 'ACME',
         'data' => ['driver' => 'sqlite'],

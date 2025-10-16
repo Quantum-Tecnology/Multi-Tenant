@@ -32,7 +32,8 @@ it('allows customizing the tenant connection via resolver', function (): void {
     ]);
 
     // Fake resolver that uses a custom connection name and tweaks config
-    $resolver = new class implements TenantConnectionResolver {
+    $resolver = new class implements TenantConnectionResolver
+    {
         public function buildConnectionConfig(Tenant $tenant, array $baseConnection): array
         {
             // Force sqlite memory for test stability and include tenant database name for verification

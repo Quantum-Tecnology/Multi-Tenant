@@ -1,7 +1,10 @@
 <?php
 
-if(!function_exists('tenant')){
-    function tenant(){
+declare(strict_types=1);
+
+if (! function_exists('tenant')) {
+    function tenant()
+    {
         return app('tenant');
     }
 }

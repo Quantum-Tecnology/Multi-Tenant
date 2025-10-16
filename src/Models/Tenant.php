@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace QuantumTecnology\Tenant\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use QuantumTecnology\Tenant\Models\Concerns\GeneratesIds;
 use Stancl\VirtualColumn\VirtualColumn;
 
 class Tenant extends Model
 {
-    use VirtualColumn, GeneratesIds;
+    use GeneratesIds, VirtualColumn;
 
     protected $table = 'tenants';
+
     protected $primaryKey = 'id';
+
     protected $guarded = [];
 
     public function getTenantKeyName(): string

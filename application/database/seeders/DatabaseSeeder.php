@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Tenant;
+use Illuminate\Database\Seeder;
 
 final class DatabaseSeeder extends Seeder
 {
@@ -15,19 +15,19 @@ final class DatabaseSeeder extends Seeder
         Tenant::create([
             'name' => 'Default Tenant',
             'domain' => 'localhost',
-            'database' => 'multitenant_demo'
+            'database' => 'multitenant_demo',
         ]);
 
         Tenant::create([
             'name' => 'Second Tenant',
             'domain' => '127.0.0.1',
-            'database' => 'multitenant_demo2'
+            'database' => 'multitenant_demo2',
         ]);
 
         Tenant::create([
             'name' => 'Third Tenant',
             'domain' => 'testing',
-            'database' => 'multitenant_demo3'
+            'database' => 'multitenant_demo3',
         ]);
     }
 }

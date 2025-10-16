@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs\Test;
 
-use App\Models\Sector;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\DefaultTenantEnvironmentApplier;
 
-it('applies and resets environment changes per tenant', function () {
+it('applies and resets environment changes per tenant', function (): void {
     Config::set('cache.prefix', 'app');
     Config::set('cache.default', 'redis');
     Config::set('database.redis.options.prefix', 'app:');

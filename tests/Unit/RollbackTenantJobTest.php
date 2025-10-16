@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -9,10 +10,10 @@ use QuantumTecnology\Tenant\Jobs\RollbackTenantJob;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\TenantManager;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // central default to sqlite file for stability
     $central = sys_get_temp_dir().DIRECTORY_SEPARATOR.'central_rb.sqlite';
-    if (!file_exists($central)) {
+    if (! file_exists($central)) {
         touch($central);
     }
     config()->set('database.default', 'sqlite');
@@ -26,7 +27,7 @@ beforeEach(function () {
     if (Schema::hasTable('tenant_migrations_progress')) {
         Schema::drop('tenant_migrations_progress');
     }
-    Schema::create('tenant_migrations_progress', function ($table) {
+    Schema::create('tenant_migrations_progress', function ($table): void {
         $table->string('tenant_id');
         $table->string('batch_id');
         $table->integer('status');
@@ -36,7 +37,8 @@ beforeEach(function () {
     });
 });
 
-function prepareTenantWithMigrations(string $dbName, array $batches): Tenant {
+function prepareTenantWithMigrations(string $dbName, array $batches): Tenant
+{
     $tenantDb = sys_get_temp_dir().DIRECTORY_SEPARATOR.$dbName;
     if (file_exists($tenantDb)) {
         @unlink($tenantDb);
@@ -50,7 +52,7 @@ function prepareTenantWithMigrations(string $dbName, array $batches): Tenant {
         'prefix' => '',
     ]);
 
-    Schema::connection('tenant')->create('migrations', function ($table) {
+    Schema::connection('tenant')->create('migrations', function ($table): void {
         $table->increments('id');
         $table->string('migration');
         $table->integer('batch');
@@ -74,18 +76,34 @@ function prepareTenantWithMigrations(string $dbName, array $batches): Tenant {
     return $tenant;
 }
 
-it('rolls back migrations above a given step successfully', function () {
+it('rolls back migrations above a given step successfully', function (): void {
     $tenant = prepareTenantWithMigrations('tenant_rb_ok.sqlite', [1, 2, 3]);
 
     // Expect rollbacks to succeed: swap Console Kernel with a fake that returns 0 on call()
-    app()->instance(\Illuminate\Contracts\Console\Kernel::class, new class implements \Illuminate\Contracts\Console\Kernel {
-        public function handle($input, $output = null) {}
-        public function terminate($input, $status) {}
-        public function call($command, array $parameters = [], $outputBuffer = null) { return 0; }
-        public function queue($command, array $parameters = []) {}
-        public function all() { return []; }
-        public function output() { return ''; }
-        public function bootstrap() {}
+    app()->instance(Illuminate\Contracts\Console\Kernel::class, new class implements Illuminate\Contracts\Console\Kernel
+    {
+        public function handle($input, $output = null): void {}
+
+        public function terminate($input, $status): void {}
+
+        public function call($command, array $parameters = [], $outputBuffer = null)
+        {
+            return 0;
+        }
+
+        public function queue($command, array $parameters = []): void {}
+
+        public function all()
+        {
+            return [];
+        }
+
+        public function output()
+        {
+            return '';
+        }
+
+        public function bootstrap(): void {}
     });
 
     $job = new RollbackTenantJob($tenant, '1');
@@ -94,23 +112,39 @@ it('rolls back migrations above a given step successfully', function () {
     expect(app()->has('tenant'))->toBeFalse();
 });
 
-it('records error on rollback failure', function () {
+it('records error on rollback failure', function (): void {
     $tenant = prepareTenantWithMigrations('tenant_rb_fail.sqlite', [2]);
 
     // Swap Console Kernel with a fake that throws on call() to simulate failure
-    app()->instance(\Illuminate\Contracts\Console\Kernel::class, new class implements \Illuminate\Contracts\Console\Kernel {
-        public function handle($input, $output = null) {}
-        public function terminate($input, $status) {}
-        public function call($command, array $parameters = [], $outputBuffer = null) { throw new Exception('boom'); }
-        public function queue($command, array $parameters = []) {}
-        public function all() { return []; }
-        public function output() { return ''; }
-        public function bootstrap() {}
+    app()->instance(Illuminate\Contracts\Console\Kernel::class, new class implements Illuminate\Contracts\Console\Kernel
+    {
+        public function handle($input, $output = null): void {}
+
+        public function terminate($input, $status): void {}
+
+        public function call($command, array $parameters = [], $outputBuffer = null): void
+        {
+            throw new Exception('boom');
+        }
+
+        public function queue($command, array $parameters = []): void {}
+
+        public function all()
+        {
+            return [];
+        }
+
+        public function output()
+        {
+            return '';
+        }
+
+        public function bootstrap(): void {}
     });
 
     $job = new RollbackTenantJob($tenant, '1');
 
-    expect(function () use ($job) {
+    expect(function () use ($job): void {
         $job->handle(app(TenantManager::class));
     })->toThrow(Exception::class);
 

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Jobs\MigrateTenantJob;
 use QuantumTecnology\Tenant\Jobs\RollbackBatchJob;
+use QuantumTecnology\Tenant\Support\TenantManager;
 use Throwable;
 
 final class MigrateCommand extends Command
@@ -68,8 +69,8 @@ final class MigrateCommand extends Command
 
                     if (filled($successful)) {
                         logger('❌ '.__('Batch failed, rolling back already migrated tenants (:total total).', [
-                            'total' => count($successful),
-                        ]));
+                                'total' => count($successful),
+                            ]));
                         dispatch(new RollbackBatchJob($successful));
                     }
 

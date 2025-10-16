@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\TenantManager;
 
-it('switches to tenant connection and disconnects back to original', function () {
+it('switches to tenant connection and disconnects back to original', function (): void {
     // Ensure a base connection exists
     Config::set('database.default', 'sqlite');
     Config::set('database.connections.sqlite', [

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Str;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\DefaultTenantConnectionResolver;
 
-it('merges tenant data over base connection and returns fixed name', function () {
+it('merges tenant data over base connection and returns fixed name', function (): void {
     $resolver = new DefaultTenantConnectionResolver();
 
     $tenant = new Tenant();
