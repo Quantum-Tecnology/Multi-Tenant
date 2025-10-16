@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (tenant()->id === '01k7m0ngt49hscpqar742qqkaa') {
-            //            throw new Exception('oi tudo bem');
+        if (tenant()->id === '0199edf5-524b-70fa-9dc7-69950f5664cf') {
+            throw new Exception('oi tudo bem');
         }
     }
 

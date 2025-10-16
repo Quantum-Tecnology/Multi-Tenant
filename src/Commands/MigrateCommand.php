@@ -6,12 +6,15 @@ namespace QuantumTecnology\Tenant\Commands;
 
 use Illuminate\Bus\Batch;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use QuantumTecnology\Tenant\Actions\MigrateAction;
+use QuantumTecnology\Tenant\Actions\RollbackAction;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Jobs\MigrateTenantJob;
 use QuantumTecnology\Tenant\Jobs\RollbackBatchJob;
-use QuantumTecnology\Tenant\Support\TenantManager;
+use QuantumTecnology\Tenant\Models\Tenant;
 use Throwable;
 
 final class MigrateCommand extends Command
@@ -21,11 +24,8 @@ final class MigrateCommand extends Command
                             {--fresh : Run migrate:fresh for each tenant}
                             {--seed : Run seeders after migrate for each tenant}';
 
-    protected $description = 'Run tenant migrations in a batch with global rollback on failure.';
+    protected $description = 'Command description';
 
-    /**
-     * @throws Throwable
-     */
     public function handle(): int
     {
         $tenantId = $this->option('tenant_id');
@@ -45,6 +45,19 @@ final class MigrateCommand extends Command
             return self::FAILURE;
         }
 
+        if (config('queue.default') === 'sync') {
+            $this->runCommandBySync($tenants);
+
+            return self::SUCCESS;
+        }
+
+        $this->runCommandByJob($tenants);
+
+        return self::SUCCESS;
+    }
+
+    private function runCommandByJob(Collection $tenants): void
+    {
         $jobs = $tenants->map(fn ($tenant): MigrateTenantJob => new MigrateTenantJob(
             $tenant,
             $this->option('fresh'),
@@ -53,7 +66,7 @@ final class MigrateCommand extends Command
 
         $batch = Bus::batch($jobs)
             ->then(function (): void {
-                logger(__('✅ Batch completed successfully.'));
+                tenantLogAndPrint(__('✅ Batch completed successfully.'));
             })
             ->finally(function (Batch $batch): void {
                 $exist = DB::table(config('tenant.table.progress'))
@@ -68,20 +81,70 @@ final class MigrateCommand extends Command
                         ->toArray();
 
                     if (filled($successful)) {
-                        logger('❌ '.__('Batch failed, rolling back already migrated tenants (:total total).', [
-                                'total' => count($successful),
-                            ]));
+                        tenantLogAndPrint('❌ '.__('Batch failed, rolling back already migrated tenants (:total total).', [
+                            'total' => count($successful),
+                        ]));
                         dispatch(new RollbackBatchJob($successful));
                     }
 
-                    logger(__('🏁 Migration process finished.'));
+                    tenantLogAndPrint(__('🏁 Migration process finished.'));
                 }
             })
-            ->onQueue(config('tenant.queue.connection'))
+            ->onQueue(config('tenant.queue.name'))
             ->dispatch();
 
-        $this->info(__('🚀 Batch started. ID: :id', ['id' => $batch->id]));
+        tenantLogAndPrint(__('🚀 Batch started. ID: :id', ['id' => $batch->id]));
+    }
 
-        return self::SUCCESS;
+    private function runCommandBySync(Collection $tenants): void
+    {
+        $model = config('tenant.model.tenant');
+        $id = (string) str()->uuid();
+
+        $error = collect();
+
+        $tenants->each(function (Tenant $tenant) use ($id, $error) {
+            try {
+                app(MigrateAction::class)->execute(
+                    $tenant,
+                    $id,
+                    $this->option('fresh'),
+                    $this->option('seed')
+                );
+            } catch (Throwable $e) {
+                $error->push($tenant);
+                report($e);
+            }
+        });
+
+        if ($error->count()) {
+            tenantLogAndPrint(__('⚠️ Some tenants failed during migration: :total', [
+                'total' => $error->count(),
+            ]), 'warning');
+
+            $exist = DB::table(config('tenant.table.progress'))
+                ->where('batch_id', $id)
+                ->where('status', StatusEnum::ERROR->value)
+                ->exists();
+
+            if ($exist) {
+                $successful = DB::table(config('tenant.table.progress'))
+                    ->where('batch_id', $id)
+                    ->pluck('last_batch', 'tenant_id')
+                    ->toArray();
+
+                if (filled($successful)) {
+                    tenantLogAndPrint('❌ '.__('Batch failed, rolling back already migrated tenants (:total total).', [
+                        'total' => count($successful),
+                    ]));
+
+                    foreach ($successful as $tenant => $step) {
+                        app(RollbackAction::class)->execute($model::find($tenant), (string) $step);
+                    }
+                }
+
+                tenantLogAndPrint(__('🏁 Migration process finished.'));
+            }
+        }
     }
 }

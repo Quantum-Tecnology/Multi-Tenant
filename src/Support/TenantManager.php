@@ -17,12 +17,10 @@ final class TenantManager
     private readonly string $originalDefault;
 
     public function __construct(
-        public ?TenantConnectionResolver $resolver = null,
-        public ?TenantEnvironmentApplier $environment = null
+        public TenantConnectionResolver $resolver,
+        public TenantEnvironmentApplier $environment
     ) {
         $this->originalDefault = config('database.default');
-        $this->resolver ??= new DefaultTenantConnectionResolver();
-        $this->environment ??= new DefaultTenantEnvironmentApplier();
     }
 
     /**
@@ -34,7 +32,7 @@ final class TenantManager
 
         $base = config('database.connections.'.$this->originalDefault);
 
-        $connectionConfig = $this->resolver->buildConnectionConfig($tenant, $base, $tenant->data ?? []);
+        $connectionConfig = $this->resolver->buildConnectionConfig($tenant, $base, $tenant->getOriginal('data') ?? []);
         $connectionName = $this->resolver->connectionName($tenant);
 
         Config::set('database.connections.'.$connectionName, $connectionConfig);

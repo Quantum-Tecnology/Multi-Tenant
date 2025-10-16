@@ -8,15 +8,25 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
+use QuantumTecnology\Tenant\Contracts\TenantConnectionResolver;
+use QuantumTecnology\Tenant\Contracts\TenantEnvironmentApplier;
 use QuantumTecnology\Tenant\Contracts\UniqueIdentifierInterface;
+use QuantumTecnology\Tenant\Support\DefaultTenantConnectionResolver;
+use QuantumTecnology\Tenant\Support\DefaultTenantEnvironmentApplier;
 use QuantumTecnology\Tenant\Support\TenantManager;
 
 final class TenantServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singletonIf(TenantConnectionResolver::class, DefaultTenantConnectionResolver::class);
+        $this->app->singletonIf(TenantEnvironmentApplier::class, DefaultTenantEnvironmentApplier::class);
+
         // Allow users to override the resolver binding in a higher-priority provider if needed
-        $this->app->singletonIf(TenantManager::class, fn ($app): TenantManager => new TenantManager());
+        $this->app->singletonIf(TenantManager::class, fn ($app): TenantManager => new TenantManager(
+            app(TenantConnectionResolver::class),
+            app(TenantEnvironmentApplier::class)
+        ));
 
         $this->mergeConfigFrom(
             __DIR__.'/../config/tenant.php',
