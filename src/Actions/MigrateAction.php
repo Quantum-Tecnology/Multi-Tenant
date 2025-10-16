@@ -50,7 +50,7 @@ final readonly class MigrateAction
         try {
             $params = [
                 '--database' => 'tenant',
-                '--path' => 'database/migrations/tenant',
+                '--path' => config('tenant.database.path'),
                 '--force' => true,
             ];
 
@@ -62,7 +62,7 @@ final readonly class MigrateAction
 
             if ($seed) {
                 Artisan::call('db:seed', [
-                    'class' => 'TenantSeeder',
+                    'class' => config('tenant.database.seeder'),
                 ]);
             }
 

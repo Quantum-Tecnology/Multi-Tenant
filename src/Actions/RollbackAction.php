@@ -34,7 +34,7 @@ final readonly class RollbackAction
             foreach ($paths as $migration) {
                 Artisan::call('migrate:rollback', [
                     '--database' => 'tenant',
-                    '--path' => "database/migrations/tenant/{$migration}.php",
+                    '--path' => config('tenant.database.path')."/{$migration}.php",
                     '--force' => true,
                 ]);
             }

@@ -7,6 +7,10 @@ return [
         'tenant' => QuantumTecnology\Tenant\Models\Tenant::class,
         'id_generator' => QuantumTecnology\Tenant\Support\UniqueIdentifierGenerators\UUIDGenerator::class,
     ],
+    'database' => [
+        'migrations' => 'database/migrations/tenant',
+        'seeder' => 'TenantSeeder',
+    ],
     'table' => [
         'progress' => env('TENANT_TABLE_PROGRESS', 'tenant_migrations_progress'),
     ],
