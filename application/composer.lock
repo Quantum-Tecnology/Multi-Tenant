@@ -2960,7 +2960,7 @@
             "dist": {
                 "type": "path",
                 "url": "..",
-                "reference": "cade6e2d8aa095ef127a92d049264d5fb833ed55"
+                "reference": "207efc906635ec2fcbfc30add0ebd0e309968ce3"
             },
             "require": {
                 "illuminate/container": "^10.0|^11.0|^12.0",
@@ -2989,7 +2989,7 @@
                     "QuantumTecnology\\Tenant\\": "src/"
                 },
                 "files": [
-                    "src/helpers.php"
+                    "src/Support/Helpers.php"
                 ]
             },
             "autoload-dev": {

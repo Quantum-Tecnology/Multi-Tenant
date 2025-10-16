@@ -23,7 +23,7 @@
       "QuantumTecnology\\Tenant\\": "src/"
     },
     "files": [
-      "src/helpers.php"
+      "src/Support/Helpers.php"
     ]
   },
   "autoload-dev": {
