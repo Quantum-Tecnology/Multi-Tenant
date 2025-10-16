@@ -18,6 +18,13 @@ final class Tenant extends Model
 
     protected $guarded = [];
 
+    public static function getCustomColumns(): array
+    {
+        return [
+            'id',
+        ];
+    }
+
     public function getTenantKeyName(): string
     {
         return 'id';
