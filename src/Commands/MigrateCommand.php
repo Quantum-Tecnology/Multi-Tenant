@@ -81,7 +81,7 @@ final class MigrateCommand extends Command
                         ->toArray();
 
                     if (filled($successful)) {
-                        tenantLogAndPrint('❌ '.__('Batch failed, rolling back already migrated tenants (:total total).', [
+                        tenantLogAndPrint('❌ '.__(' Batch failed, rolling back already migrated tenants (:total total).', [
                             'total' => count($successful),
                         ]));
                         dispatch(new RollbackBatchJob($successful));
@@ -109,7 +109,8 @@ final class MigrateCommand extends Command
                     $tenant,
                     $id,
                     $this->option('fresh'),
-                    $this->option('seed')
+                    $this->option('seed'),
+                    true
                 );
             } catch (Throwable $e) {
                 $error->push($tenant);
@@ -134,12 +135,16 @@ final class MigrateCommand extends Command
                     ->toArray();
 
                 if (filled($successful)) {
-                    tenantLogAndPrint('❌ '.__('Batch failed, rolling back already migrated tenants (:total total).', [
+                    tenantLogAndPrint('❌ '.__(' Batch failed, rolling back already migrated tenants (:total total).', [
                         'total' => count($successful),
                     ]));
 
                     foreach ($successful as $tenant => $step) {
-                        app(RollbackAction::class)->execute($model::find($tenant), (string) $step);
+                        app(RollbackAction::class)->execute(
+                            $model::find($tenant),
+                            (string) $step,
+                            true
+                        );
                     }
                 }
 

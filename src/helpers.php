@@ -11,11 +11,11 @@ if (! function_exists('tenant')) {
 
 if (! function_exists('tenantLogAndPrint')) {
 
-    function tenantLogAndPrint(string $message, string $level = 'info'): void
+    function tenantLogAndPrint(string $message, string $level = 'info', bool $console = false): void
     {
         logger()->{$level}($message);
 
-        if (app()->runningInConsole()) {
+        if (app()->runningInConsole() && $console) {
             $color = match ($level) {
                 'error' => "\033[31m", // vermelho
                 'warning' => "\033[33m", // amarelo

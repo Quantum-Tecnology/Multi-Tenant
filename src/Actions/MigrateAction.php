@@ -21,7 +21,8 @@ final readonly class MigrateAction
         Tenant $tenant,
         string $identifier,
         bool $fresh = false,
-        bool $seed = false
+        bool $seed = false,
+        bool $console = false,
     ): void {
         $this->manager->switchTo($tenant);
 
@@ -67,7 +68,7 @@ final readonly class MigrateAction
 
             $this->manager->disconnect();
 
-            tenantLogAndPrint("✅ Migração concluída no tenant {$tenant->id}");
+            tenantLogAndPrint("✅  Migração concluída no tenant {$tenant->id}", console: $console);
 
             DB::table(config('tenant.table.progress'))->where([
                 'tenant_id' => $tenant->id,
@@ -79,7 +80,7 @@ final readonly class MigrateAction
 
         } catch (Throwable $e) {
             $this->manager->disconnect();
-            tenantLogAndPrint("❌ Falha ao migrar tenant {$tenant->id}: {$e->getMessage()}", 'error');
+            tenantLogAndPrint("❌  Falha ao migrar tenant {$tenant->id}: {$e->getMessage()}", 'error', $console);
 
             DB::table(config('tenant.table.progress'))->where([
                 'tenant_id' => $tenant->id,

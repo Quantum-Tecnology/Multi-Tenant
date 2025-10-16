@@ -20,6 +20,7 @@ final readonly class RollbackAction
     public function execute(
         Tenant $tenant,
         string $step,
+        bool $console = false,
     ): void {
         $this->manager->switchTo($tenant);
 
@@ -38,12 +39,10 @@ final readonly class RollbackAction
                 ]);
             }
 
-            tenantLogAndPrint("↩️ Rollback feito em {$tenant->id} on the step {$step}");
+            tenantLogAndPrint("↩️ Rollback feito em {$tenant->id} on the step {$step}", console: $console);
         } catch (Throwable $e) {
             // Ensure we are back on the central connection before recording the failure
             $this->manager->disconnect();
-
-            tenantLogAndPrint("⚠️ Falha ao reverter {$tenant->id}: {$e->getMessage()}", 'error');
 
             DB::table(config('tenant.table.progress'))->insert([
                 'tenant_id' => $tenant->id,
@@ -54,6 +53,8 @@ final readonly class RollbackAction
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            tenantLogAndPrint("⚠️ Falha ao reverter {$tenant->id}: {$e->getMessage()}", 'error', $console);
 
             throw $e;
         } finally {
