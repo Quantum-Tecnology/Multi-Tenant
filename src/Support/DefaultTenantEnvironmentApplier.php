@@ -39,8 +39,6 @@ final class DefaultTenantEnvironmentApplier implements TenantEnvironmentApplier
 
     public function reset(): void
     {
-        app()->forgetInstance('tenant');
-
         if ($this->originalCachePrefix !== null) {
             Config::set('cache.prefix', $this->originalCachePrefix);
         }

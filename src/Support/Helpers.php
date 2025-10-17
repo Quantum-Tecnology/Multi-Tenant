@@ -11,7 +11,7 @@ if (! function_exists('tenant')) {
 
 if (! function_exists('tenantLogAndPrint')) {
 
-    function tenantLogAndPrint(string $message, string $level = 'info', bool $console = false): void
+    function tenantLogAndPrint(string $message, string $level = 'debug', bool $console = false): void
     {
         logger()->{$level}($message);
 

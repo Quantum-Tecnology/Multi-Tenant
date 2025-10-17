@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace QuantumTecnology\Tenant;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
@@ -44,9 +45,11 @@ final class TenantServiceProvider extends ServiceProvider
     {
         // Injetar tenant_id no payload
         Queue::createPayloadUsing(function ($connection, $queue, array $payload): array {
-            if (tenant()) {
-                $payload['tenant_id'] = tenant()->id;
+            if ($tenant = tenant()) {
+                $payload['tenant_id'] = $tenant->id;
             }
+
+            app(TenantManager::class)->disconnect();
 
             return $payload;
         });
@@ -63,6 +66,30 @@ final class TenantServiceProvider extends ServiceProvider
                 }
             }
         });
+
+        //        app(QueueManager::class)->before(function ($event): void {
+        //            app(TenantManager::class)->disconnect();
+        //
+        //            $payload = $event->job?->payload();
+        //            $tenant = $payload['tenant_id'] ?? null;
+        //
+        //            tenantLogAndPrint(json_encode($payload));
+        //
+        //            if (isset($payload['data']['command']) && blank($tenant)) {
+        //                $command = unserialize($payload['data']['command']);
+        //
+        //                tenantLogAndPrint(json_encode($command));
+        //                if (isset($command->tenantId)) {
+        //                    $tenant = $command->tenantId;
+        //                }
+        //            }
+        //
+        //            if ($tenant) {
+        //                $model = config('tenant.model.tenant');
+        //                $tenant = $model::query()->find($payload['tenant_id']);
+        //                app(TenantManager::class)->switchTo($tenant);
+        //            }
+        //        });
     }
 
     private function configurePublishers(): void

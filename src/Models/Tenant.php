@@ -23,8 +23,7 @@ class Tenant extends Model
     public static function getCustomColumns(): array
     {
         return [
-            'name',
-            'domain',
+            'id',
         ];
     }
 
