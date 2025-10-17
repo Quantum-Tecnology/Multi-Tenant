@@ -23,7 +23,5 @@ final class BatchJob implements ShouldQueue
 
         logger('Rolling non tenant on the batch job: '.tenant()->id);
         $this->batch()->add(new BatchSecondJob());
-
-        \Illuminate\Support\Facades\Cache::set('test_batch', 'oi');
     }
 }

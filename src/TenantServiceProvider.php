@@ -57,7 +57,6 @@ final class TenantServiceProvider extends ServiceProvider
 
             if (isset($payload['tenant_id'])) {
                 $model = config('tenant.model.tenant');
-                app(TenantManager::class)->disconnect();
                 $tenant = $model::query()->find($payload['tenant_id']);
                 if ($tenant) {
                     app(TenantManager::class)->switchTo($tenant);

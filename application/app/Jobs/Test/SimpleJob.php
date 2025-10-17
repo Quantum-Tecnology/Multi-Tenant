@@ -17,7 +17,5 @@ final class SimpleJob implements ShouldQueue
     public function handle(): void
     {
         logger('Rolling non tenant: '.tenant()->id);
-
-        \Illuminate\Support\Facades\Cache::store('database')->set('test_job', 'oi');
     }
 }

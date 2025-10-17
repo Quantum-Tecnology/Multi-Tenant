@@ -22,7 +22,5 @@ final class BatchSecondJob implements ShouldQueue
         }
 
         logger('Rolling non tenant o the second batch: '.tenant()->id);
-
-        \Illuminate\Support\Facades\Cache::set('test_batch_second', 'oi');
     }
 }
