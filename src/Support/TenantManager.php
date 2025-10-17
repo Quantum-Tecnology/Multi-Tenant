@@ -26,7 +26,7 @@ final class TenantManager
     /**
      * Conecta ao tenant e ajusta cache
      */
-    public function switchTo(Tenant $tenant): void
+    public function switchTo(Tenant $tenant): self
     {
         $this->tenant = $tenant;
 
@@ -44,18 +44,22 @@ final class TenantManager
 
         // Delegate environment side-effects (cache, container binding, etc.)
         $this->environment->apply($tenant, $connectionName);
+
+        return $this;
     }
 
     /**
      * Disconnects from the tenant and returns to default
      */
-    public function disconnect(): void
+    public function disconnect(): self
     {
         $this->tenant = null;
         Config::set('database.default', $this->originalDefault);
 
         // Delegate reset of environment
         $this->environment->reset();
+
+        return $this;
     }
 
     public function getTenant(): ?Tenant

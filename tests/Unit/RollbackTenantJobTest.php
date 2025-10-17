@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Jobs\RollbackTenantJob;
 use QuantumTecnology\Tenant\Models\Tenant;
-use QuantumTecnology\Tenant\Support\TenantManager;
 
 beforeEach(function (): void {
     // central default to sqlite file for stability
@@ -107,7 +106,7 @@ it('rolls back migrations above a given step successfully', function (): void {
     });
 
     $job = new RollbackTenantJob($tenant, '1');
-    $job->handle(app(TenantManager::class));
+    $job->handle();
 
     expect(app()->has('tenant'))->toBeFalse();
 });
@@ -145,7 +144,7 @@ it('records error on rollback failure', function (): void {
     $job = new RollbackTenantJob($tenant, '1');
 
     expect(function () use ($job): void {
-        $job->handle(app(TenantManager::class));
+        $job->handle();
     })->toThrow(Exception::class);
 
     $row = DB::table('tenant_migrations_progress')->where([

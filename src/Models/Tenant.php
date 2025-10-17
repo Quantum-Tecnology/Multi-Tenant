@@ -11,6 +11,7 @@ use Stancl\VirtualColumn\VirtualColumn;
 class Tenant extends Model
 {
     use GeneratesIds, VirtualColumn;
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $table = 'tenants';
 

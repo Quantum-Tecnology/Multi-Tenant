@@ -103,7 +103,7 @@ final class MigrateCommand extends Command
 
         $error = collect();
 
-        $tenants->each(function (Tenant $tenant) use ($id, $error) {
+        $tenants->each(function (Tenant $tenant) use ($id, $error): void {
             try {
                 app(MigrateAction::class)->execute(
                     $tenant,
@@ -118,7 +118,7 @@ final class MigrateCommand extends Command
             }
         });
 
-        if ($error->count()) {
+        if ($error->count() !== 0) {
             tenantLogAndPrint(__('⚠️ Some tenants failed during migration: :total', [
                 'total' => $error->count(),
             ]), 'warning');

@@ -87,10 +87,7 @@
             "rector",
             "pint --parallel",
             "rector",
-            "pint --parallel",
-            "rector",
-            "pint --parallel",
-            "npm run lint"
+            "pint --parallel"
         ],
         "test:type-coverage": "pest --type-coverage --min=100",
         "test:lint": [
