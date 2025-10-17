@@ -27,11 +27,14 @@ final readonly class MigrateAction
     ): void {
         $this->manager->switchTo($tenant);
 
-        $batch = DB::connection('tenant')
-            ->table(config('database.migrations.table'))
-            ->orderByDesc('id')
-            ->first()
-            ?->batch;
+        $batch = '0';
+
+        if (DB::getSchemaBuilder()->hasTable(config('database.migrations.table'))) {
+            $batch = DB::table(config('database.migrations.table'))
+                ->orderByDesc('batch')
+                ->first()
+                ?->batch;
+        }
 
         $this->manager->disconnect();
 
@@ -43,8 +46,6 @@ final readonly class MigrateAction
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
-        DB::table('migrations')->where('id', '>', 13)->delete();
 
         $this->manager->switchTo($tenant);
 
