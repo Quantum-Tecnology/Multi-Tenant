@@ -50,7 +50,7 @@ final readonly class MigrateAction
         try {
             $params = [
                 '--database' => 'tenant',
-                '--path' => config('tenant.database.path'),
+                '--path' => config('tenant.database.migrations'),
                 '--force' => true,
             ];
 
