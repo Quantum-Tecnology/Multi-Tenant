@@ -1,0 +1,41 @@
+name: Versionamento - All-in-One
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - "[0-9]+.x"  # ex.: 1.x, 2.x
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  version-auto:
+    if: ${{ github.event_name == 'push' && github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Versioning Action (auto)
+        uses: bhcosta90/gitflow-versioning-action@1.0.0
+        with:
+          mode: auto
+
+  finalize:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Versioning Action (package)
+        uses: bhcosta90/gitflow-versioning-action@1.0.0
+        with:
+          mode: package
