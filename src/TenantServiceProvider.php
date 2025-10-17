@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace QuantumTecnology\Tenant;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
@@ -52,24 +51,16 @@ final class TenantServiceProvider extends ServiceProvider
             return $payload;
         });
 
-        app(QueueManager::class)->before(function ($event): void {
-            app(TenantManager::class)->disconnect();
+        Queue::before(function ($event): void {
+            $payload = $event->job->payload();
 
-            $payload = $event->job?->payload();
-            $tenant = $payload['tenant_id'] ?? null;
-
-            if (isset($payload['data']['command']) && blank($tenant)) {
-                $command = unserialize($payload['data']['command']);
-
-                if (isset($command->tenantId)) {
-                    $tenant = $command->tenantId;
-                }
-            }
-
-            if ($tenant) {
+            if (isset($payload['tenant_id'])) {
                 $model = config('tenant.model.tenant');
+                app(TenantManager::class)->disconnect();
                 $tenant = $model::query()->find($payload['tenant_id']);
-                app(TenantManager::class)->switchTo($tenant);
+                if ($tenant) {
+                    app(TenantManager::class)->switchTo($tenant);
+                }
             }
         });
     }
