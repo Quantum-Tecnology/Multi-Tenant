@@ -5,7 +5,7 @@ declare(strict_types=1);
 if (! function_exists('tenant')) {
     function tenant()
     {
-        return app('tenant');
+        return app()->bound('tenant') ? app('tenant') : null;
     }
 }
 
