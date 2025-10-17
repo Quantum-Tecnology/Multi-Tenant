@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\TenantManager;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Throwable;
 
 final readonly class MigrateAction
@@ -47,6 +48,8 @@ final readonly class MigrateAction
 
         $this->manager->switchTo($tenant);
 
+        $output = new ConsoleOutput();
+
         try {
             $params = [
                 '--database' => 'tenant',
@@ -55,9 +58,9 @@ final readonly class MigrateAction
             ];
 
             if ($fresh) {
-                Artisan::call('migrate:fresh', $params);
+                Artisan::call('migrate:fresh', $params, $output);
             } else {
-                Artisan::call('migrate', $params);
+                Artisan::call('migrate', $params, $output);
             }
 
             if ($seed) {

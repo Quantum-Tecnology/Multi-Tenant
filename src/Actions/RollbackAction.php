@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use QuantumTecnology\Tenant\Jobs\Enum\StatusEnum;
 use QuantumTecnology\Tenant\Models\Tenant;
 use QuantumTecnology\Tenant\Support\TenantManager;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Throwable;
 
 final readonly class RollbackAction
@@ -31,12 +32,15 @@ final readonly class RollbackAction
             ->toArray();
 
         try {
+
+            $output = new ConsoleOutput();
+
             foreach ($paths as $migration) {
                 Artisan::call('migrate:rollback', [
                     '--database' => 'tenant',
                     '--path' => config('tenant.database.migrations')."/{$migration}.php",
                     '--force' => true,
-                ]);
+                ], $output);
             }
 
             tenantLogAndPrint(__('↩️ Rollback completed on tenant :id at step :step', ['id' => $tenant->id, 'step' => $step]), console: $console);
