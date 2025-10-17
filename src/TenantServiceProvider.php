@@ -44,9 +44,8 @@ final class TenantServiceProvider extends ServiceProvider
     {
         // Injetar tenant_id no payload
         Queue::createPayloadUsing(function ($connection, $queue, array $payload): array {
-            $tenant = app(TenantManager::class)->getTenant();
-            if ($tenant) {
-                $payload['tenant_id'] = $tenant->id;
+            if (tenant()) {
+                $payload['tenant_id'] = tenant()->id;
             }
 
             return $payload;
@@ -58,6 +57,7 @@ final class TenantServiceProvider extends ServiceProvider
 
             if (isset($payload['tenant_id'])) {
                 $model = config('tenant.model.tenant');
+                app(TenantManager::class)->disconnect();
                 $tenant = $model::query()->find($payload['tenant_id']);
                 if ($tenant) {
                     app(TenantManager::class)->switchTo($tenant);
