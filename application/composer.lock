@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56c1ab8b49eda769855a1fcd39e02200",
+    "content-hash": "12aa943ea4184bb0d5c9f4a54c931c4e",
     "packages": [
         {
             "name": "brick/math",
@@ -2955,12 +2955,18 @@
             "time": "2021-10-29T13:26:27+00:00"
         },
         {
-            "name": "quantumtecnology/tenant",
-            "version": "dev-main",
+            "name": "quantumtecnology/multi-tenant",
+            "version": "0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Quantum-Tecnology/Multi-Tenant.git",
+                "reference": "d555ea632352b6172e184ac74d07e2059e96fd7d"
+            },
             "dist": {
-                "type": "path",
-                "url": "..",
-                "reference": "207efc906635ec2fcbfc30add0ebd0e309968ce3"
+                "type": "zip",
+                "url": "https://api.github.com/repos/Quantum-Tecnology/Multi-Tenant/zipball/d555ea632352b6172e184ac74d07e2059e96fd7d",
+                "reference": "d555ea632352b6172e184ac74d07e2059e96fd7d",
+                "shasum": ""
             },
             "require": {
                 "illuminate/container": "^10.0|^11.0|^12.0",
@@ -2976,6 +2982,7 @@
                 "pestphp/pest": "^4.1.2",
                 "rector/rector": "^2.2.3"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -2985,50 +2992,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "QuantumTecnology\\Tenant\\": "src/"
-                },
                 "files": [
                     "src/Support/Helpers.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "Tests\\": "tests/"
+                    "QuantumTecnology\\Tenant\\": "src/"
                 }
             },
-            "scripts": {
-                "lint": [
-                    "rector",
-                    "pint --parallel",
-                    "rector",
-                    "pint --parallel",
-                    "rector",
-                    "pint --parallel"
-                ],
-                "test:type-coverage": [
-                    "pest --type-coverage --min=100"
-                ],
-                "test:lint": [
-                    "pint --parallel --test",
-                    "rector --dry-run"
-                ],
-                "test:unit": [
-                    "pest --parallel --coverage"
-                ],
-                "test:unit-coverage": [
-                    "pest --parallel --coverage --exactly=100.0"
-                ],
-                "test:types": [
-                    "phpstan"
-                ],
-                "test": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "@test:unit",
-                    "@test:lint",
-                    "test:types"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3041,12 +3012,11 @@
             "description": "Service Basics Extension",
             "homepage": "http://www.gustavosantarosa.esy.es/",
             "support": {
-                "email": "bhcosta90@gmail.com"
+                "email": "bhcosta90@gmail.com",
+                "issues": "https://github.com/Quantum-Tecnology/Multi-Tenant/issues",
+                "source": "https://github.com/Quantum-Tecnology/Multi-Tenant/tree/0.x"
             },
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "time": "2025-10-17T18:08:23+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -11695,7 +11665,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "quantumtecnology/tenant": 20
+        "quantumtecnology/multi-tenant": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
