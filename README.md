@@ -8,11 +8,13 @@ A small, flexible Laravel package to manage multi-tenant applications. It lets y
 ## Features
 - Pluggable connection strategy via TenantConnectionResolver contract
 - Pluggable environment adjuster via TenantEnvironmentApplier contract
-- Simple Tenant model with optional custom ID generator
-- Helper to access the current tenant in the container
-- Queue-aware tenant propagation for Jobs
-- Per-tenant migrations command (sync or queued batch)
+- Queue configuration applier to pin all queue storage to the central database (prevents tenant context from affecting enqueuing)
+- Simple Tenant model with optional custom ID generator (via UniqueIdentifierInterface)
+- Helper functions: tenant() and tenantLogAndPrint()
+- Queue-aware tenant propagation for Jobs (payload carries tenant_id; worker reactivates tenant before handling)
+- Per-tenant migrations command (sync or queued batch) with progress tracking table
 - Automatic rollback of already migrated tenants if a batch fails
+- Publishable config and migrations; automatic creation of a "central" DB connection alias if missing
 
 ## Installation
 
@@ -191,7 +193,7 @@ Notes:
 Command:
 
 ```bash
-php artisan tenants:migrate [--tenant_id=] [--fresh] [--seed]
+php artisan quantum:tenant-migrate [--tenant_id=] [--fresh] [--seed]
 ```
 
 - --tenant_id: Migrate only the specified tenant ID; when omitted, all tenants are processed.
@@ -200,7 +202,7 @@ php artisan tenants:migrate [--tenant_id=] [--fresh] [--seed]
 
 Execution mode:
 - If your queue.default is sync, the command runs synchronously for each tenant.
-- Otherwise, it dispatches a batch of jobs (MigrateTenantJob) to the queue defined by tenant.queue.name.
+- Otherwise, it dispatches a batch of jobs (MigrateTenantJob) to the queue defined by tenant.queue.name (see config/tenant.php). The batch is enfileirado na conexão central.
 
 Batch behavior:
 - Each tenant migration is tracked in table tenant_migrations_progress with a batch_id (the batch UUID).
@@ -280,3 +282,77 @@ MIT License. See LICENSE file if present. © Contributors.
 
 - Author: Bruno Costa (bhcosta90@gmail.com)
 - Package namespace: QuantumTecnology\\Tenant
+
+
+## Queue configuration and central pinning
+
+This package ensures that jobs are always enqueued and stored in the central database connection, regardless of the active tenant at dispatch time. This avoids issues where switching `database.default` to a tenant would cause the `database` queue driver to write to a tenant DB that lacks `jobs`/`job_batches`/`failed_jobs` tables.
+
+What the package does:
+- Injects `tenant_id` into the payload on dispatch and re-applies the tenant before a job runs.
+- Pins queue storage to the central connection at config-time and at runtime when switching tenants.
+
+Operational requirements:
+- Ensure the central connection exists (the provider will alias it automatically if missing).
+- Create the central queue tables when using the `database` driver:
+  - php artisan queue:table && php artisan queue:batches-table && php artisan queue:failed-table
+  - php artisan migrate
+- Run your queue worker normally. With the `database` driver, it will read/write central tables.
+
+Environment variables you may use:
+- DB_QUEUE_CONNECTION=central
+- DB_QUEUE_CONNECTION_BATCHING=central
+- DB_QUEUE_CONNECTION_FAILED=central
+
+These envs are optional; the package defaults to the central connection even without them.
+
+## Helpers
+
+- tenant(): returns the current tenant instance or null.
+- tenantLogAndPrint($message, $level = 'debug', $console = false): logs a message and optionally prints to console with color. Useful inside commands/jobs/batches.
+
+Example:
+```php
+if ($tenant = tenant()) {
+    tenantLogAndPrint("Running for tenant {$tenant->id}");
+}
+```
+
+## Model utilities
+
+For models that must always use the central connection, you can use the provided trait:
+
+```php
+use QuantumTecnology\Tenant\Models\Concerns\CentraConnection; // central connection alias
+
+class AuditLog extends Model
+{
+    use CentraConnection; // forces connection name 'central'
+}
+```
+
+## Service provider behaviors
+
+- Merges package config (tenant.php).
+- Publishes config and baseline migrations (tenants and tenant_migrations_progress tables).
+- Ensures a `database.connections.central` alias exists, copying from your current default if missing.
+- Queue payload injection: attaches tenant_id on dispatch.
+- Queue before hook: re-applies tenant context before job handle.
+
+## Configuration reference (contracts and swappable parts)
+
+You can override bindings to customize behavior:
+- Contracts:
+  - TenantConnectionResolver: build tenant DB connection array and name.
+  - TenantEnvironmentResolver: apply/reset environment changes (e.g., cache prefix, container binding).
+  - TenantQueueResolver: apply queue related configuration (central pinning).
+  - UniqueIdentifierInterface: customize how tenant IDs are generated.
+
+Bind your implementations via a service provider using singletonIf/singleton.
+
+## Troubleshooting
+
+- Jobs not appearing in queue (database driver): ensure central queue tables exist and that the worker points to the same app using this package. Verify that `config('queue.connections.database.connection') === 'central'`.
+- Jobs running in wrong tenant: confirm the job class implements ShouldQueue and that you dispatch inside a tenant context or manually set tenant when needed. The package will reapply tenant if `tenant_id` is in payload.
+- Migrations stuck or rolled back: check the progress table defined by `tenant.table.progress` (default `tenant_migrations_progress`) for statuses and last_batch. See logs produced by the command and jobs.
+- SQLite during tests: you can point central and tenant to different sqlite files; ensure both exist and migrations tables are present where needed.
