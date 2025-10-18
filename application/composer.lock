@@ -3360,7 +3360,7 @@
             "dist": {
                 "type": "path",
                 "url": "..",
-                "reference": "f1a9882d3796823491c6e3ce0af46cc2a7dad089"
+                "reference": "16ee27984463a1fc1f9885ed6a13263503f64d53"
             },
             "require": {
                 "illuminate/container": "^10.0|^11.0|^12.0",
