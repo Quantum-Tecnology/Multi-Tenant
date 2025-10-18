@@ -10,23 +10,20 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use QuantumTecnology\Tenant\Contracts\TenantConnectionResolver;
-use QuantumTecnology\Tenant\Contracts\TenantEnvironmentApplier;
+use QuantumTecnology\Tenant\Contracts\TenantEnvironmentResolver;
 use QuantumTecnology\Tenant\Contracts\UniqueIdentifierInterface;
-use QuantumTecnology\Tenant\Support\DefaultTenantConnectionResolver;
-use QuantumTecnology\Tenant\Support\DefaultTenantEnvironmentApplier;
+use QuantumTecnology\Tenant\Support\TenantConnectionApply;
+use QuantumTecnology\Tenant\Support\TenantEnvironmentApply;
 use QuantumTecnology\Tenant\Support\TenantManager;
 
 final class TenantServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singletonIf(TenantConnectionResolver::class, DefaultTenantConnectionResolver::class);
-        $this->app->singletonIf(TenantEnvironmentApplier::class, DefaultTenantEnvironmentApplier::class);
+        $this->app->singletonIf(TenantConnectionResolver::class, TenantConnectionApply::class);
+        $this->app->singletonIf(TenantEnvironmentResolver::class, TenantEnvironmentApply::class);
 
-        $this->app->singletonIf(TenantManager::class, fn ($app): TenantManager => new TenantManager(
-            app(TenantConnectionResolver::class),
-            app(TenantEnvironmentApplier::class)
-        ));
+        $this->app->singletonIf(TenantManager::class, fn ($app): TenantManager => new TenantManager());
 
         $this->mergeConfigFrom(
             __DIR__.'/../config/tenant.php',

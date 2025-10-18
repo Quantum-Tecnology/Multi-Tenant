@@ -9,7 +9,7 @@ use QuantumTecnology\Tenant\Models\Tenant;
 /**
  * Abstraction to apply and reset environment side-effects when switching tenant context.
  */
-interface TenantEnvironmentApplier
+interface TenantEnvironmentResolver
 {
     /**
      * Apply environment changes after switching to the given tenant.

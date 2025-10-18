@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use Illuminate\Support\Str;
 use QuantumTecnology\Tenant\Models\Tenant;
-use QuantumTecnology\Tenant\Support\DefaultTenantConnectionResolver;
+use QuantumTecnology\Tenant\Support\TenantConnectionApply;
 
 it('merges tenant data over base connection and returns fixed name', function (): void {
-    $resolver = new DefaultTenantConnectionResolver();
+    $resolver = new TenantConnectionApply();
 
     $tenant = new Tenant();
     $tenant->id = (string) Str::ulid();

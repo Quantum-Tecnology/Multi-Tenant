@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace QuantumTecnology\Tenant\Support;
 
 use Illuminate\Support\Facades\Config;
-use QuantumTecnology\Tenant\Contracts\TenantEnvironmentApplier;
+use QuantumTecnology\Tenant\Contracts\TenantEnvironmentResolver;
 use QuantumTecnology\Tenant\Models\Tenant;
 
-final class DefaultTenantEnvironmentApplier implements TenantEnvironmentApplier
+final class TenantEnvironmentApply implements TenantEnvironmentResolver
 {
     private ?string $originalCachePrefix = null;
 

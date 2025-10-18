@@ -7,7 +7,8 @@ namespace QuantumTecnology\Tenant\Support;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use QuantumTecnology\Tenant\Contracts\TenantConnectionResolver;
-use QuantumTecnology\Tenant\Contracts\TenantEnvironmentApplier;
+use QuantumTecnology\Tenant\Contracts\TenantEnvironmentResolver;
+use QuantumTecnology\Tenant\Contracts\TenantQueueResolver;
 use QuantumTecnology\Tenant\Models\Tenant;
 
 final class TenantManager
@@ -17,10 +18,23 @@ final class TenantManager
     private readonly string $originalDefault;
 
     public function __construct(
-        public TenantConnectionResolver $resolver,
-        public TenantEnvironmentApplier $environment
+        public ?TenantConnectionResolver $resolver = null,
+        public ?TenantQueueResolver $queue = null,
+        public ?TenantEnvironmentResolver $environment = null
     ) {
         $this->originalDefault = config('database.default');
+
+        if (blank($this->resolver)) {
+            $this->resolver = app(TenantConnectionResolver::class);
+        }
+
+        if (blank($this->environment)) {
+            $this->environment = app(TenantEnvironmentResolver::class);
+        }
+
+        if (blank($this->queue)) {
+            $this->queue = app(TenantQueueApply::class);
+        }
     }
 
     /**
@@ -48,6 +62,7 @@ final class TenantManager
 
         // Delegate environment side-effects (cache, container binding, etc.)
         $this->environment->apply($tenant, $connectionName);
+        $this->queue->buildConnectionConfig('central');
 
         return $this;
     }

@@ -5,14 +5,14 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use QuantumTecnology\Tenant\Models\Tenant;
-use QuantumTecnology\Tenant\Support\DefaultTenantEnvironmentApplier;
+use QuantumTecnology\Tenant\Support\TenantEnvironmentApply;
 
 it('applies and resets environment changes per tenant', function (): void {
     Config::set('cache.prefix', 'app');
     Config::set('cache.default', 'redis');
     Config::set('database.redis.options.prefix', 'app:');
 
-    $applier = new DefaultTenantEnvironmentApplier();
+    $applier = new TenantEnvironmentApply();
 
     $tenant = new Tenant();
     $tenant->id = (string) Str::ulid();

@@ -11,7 +11,7 @@ use QuantumTecnology\Tenant\Models\Tenant;
  * Default implementation: merges tenant->data over the base connection and uses a fixed
  * connection name 'tenant'.
  */
-final class DefaultTenantConnectionResolver implements TenantConnectionResolver
+final class TenantConnectionApply implements TenantConnectionResolver
 {
     /**
      * @param  array<string, mixed>  $baseConnection
