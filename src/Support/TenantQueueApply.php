@@ -13,7 +13,7 @@ final class TenantQueueApply implements TenantQueueResolver
     {
         Config::set([
             'queue.connections.database.connection' => env('DB_QUEUE_CONNECTION', 'central'),
-            'queue.batching.database' => 'central',
+            'queue.batching.database' => env('DB_QUEUE_CONNECTION_BATCHING', 'central'),
         ]);
     }
 }

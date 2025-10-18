@@ -15,21 +15,21 @@ final class DatabaseSeeder extends Seeder
         Tenant::create([
             'name' => 'Default Tenant',
             'domain' => '127.0.0.1',
-            'database' => 'wms_demo_1',
+            'database' => 'wms_testing_tenant1',
         ]);
 
-        //        Tenant::create([
-        //            'id' => '0199edf5-524b-70fa-9dc7-69950f5664cf',
-        //            'name' => 'Second Tenant',
-        //            'domain' => '127.0.0.1',
-        //            'database' => 'multitenant_demo2',
-        //        ]);
+        Tenant::create([
+            'id' => '0199edf5-524b-70fa-9dc7-69950f5664cf',
+            'name' => 'Second Tenant',
+            'domain' => 'localhost',
+            'database' => 'wms_testing_tenant2',
+        ]);
 
-        //        Tenant::create([
-        //            'id' => '0199edf5-5256-724d-8147-68a993ad2e9d',
-        //            'name' => 'Third Tenant',
-        //            'domain' => 'testing',
-        //            'database' => 'multitenant_demo3',
-        //        ]);
+        Tenant::create([
+            'id' => '0199edf5-5256-724d-8147-68a993ad2e9d',
+            'name' => 'Third Tenant',
+            'domain' => 'testing',
+            'database' => 'wms_testing_tenant3',
+        ]);
     }
 }

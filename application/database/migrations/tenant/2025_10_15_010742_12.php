@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         if (tenant()->id === '0199edf5-524b-70fa-9dc7-69950f5664cf') {
-            throw new Exception('oi tudo bem');
+            // throw new Exception('oi tudo bem');
         }
     }
 
