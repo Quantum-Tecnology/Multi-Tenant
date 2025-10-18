@@ -59,10 +59,11 @@ final class TenantServiceProvider extends ServiceProvider
         Queue::before(function ($event): void {
             $payload = $event->job->payload();
 
-            if (isset($payload['tenant_id'])) {
+            $tenantId = $payload['tenant_id'] ?? ($payload['data']['tenant_id'] ?? null);
+            if ($tenantId) {
                 $model = config('tenant.model.tenant');
                 app(TenantManager::class)->disconnect();
-                $tenant = $model::query()->find($payload['tenant_id']);
+                $tenant = $model::query()->find($tenantId);
                 if ($tenant) {
                     app(TenantManager::class)->switchTo($tenant);
                 }
