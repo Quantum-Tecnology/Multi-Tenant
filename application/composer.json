@@ -12,7 +12,8 @@
         "php": "^8.4.0",
         "laravel/framework": "^12.34.0",
         "nunomaduro/essentials": "^1.0.1",
-        "quantumtecnology/multi-tenant": "0.x-dev"
+        "quantumtecnology/multi-tenant": "0.x-dev",
+        "r2luna/brain": ">=1.7.1"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1.0",
@@ -56,7 +57,7 @@
         ],
         "reset": [
             "@php artisan migrate:fresh --seed",
-            "@php artisan tenant:migrate --fresh --seed"
+            "@php artisan quantum:tenant-migrate --fresh --seed"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
@@ -119,5 +120,14 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
 }

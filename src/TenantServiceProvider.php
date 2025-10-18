@@ -43,13 +43,19 @@ final class TenantServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // TODO: This is not working when using begin / transaction in the database
+        $this->configurePayloadJob();
+    }
+
+    protected function configurePayloadJob(): void
+    {
         // Injetar tenant_id no payload
         Queue::createPayloadUsing(function ($connection, $queue, array $payload): array {
             if ($tenant = tenant()) {
                 $payload['tenant_id'] = $tenant->id;
             }
 
-            app(TenantManager::class)->disconnect();
+            // app(TenantManager::class)->disconnect();
 
             return $payload;
         });
@@ -118,7 +124,7 @@ final class TenantServiceProvider extends ServiceProvider
         }
 
         $this->commands([
-            Commands\MigrateCommand::class,
+            Commands\TenantMigrateCommand::class,
         ]);
     }
 

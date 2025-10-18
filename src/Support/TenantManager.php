@@ -40,6 +40,10 @@ final class TenantManager
         DB::reconnect($connectionName);
 
         // We maintain central default
+        if (blank(config('database.connections.default'))) {
+            Config::set('database.connections.default', $connectionName);
+        }
+
         Config::set('database.default', $connectionName);
 
         // Delegate environment side-effects (cache, container binding, etc.)

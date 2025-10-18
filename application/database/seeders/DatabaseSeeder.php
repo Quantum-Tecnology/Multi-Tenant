@@ -14,7 +14,7 @@ final class DatabaseSeeder extends Seeder
     {
         Tenant::create([
             'name' => 'Default Tenant',
-            'domain' => 'localhost',
+            'domain' => '127.0.0.1',
             'database' => 'wms_demo_1',
         ]);
 

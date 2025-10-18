@@ -45,7 +45,7 @@ it('runs tenant migration job and updates progress table to success', function (
     // Prepare tenant db file and its migrations table
     $tenantDb = create_sqlite_file('tenant.sqlite');
 
-    // Create a tenant model
+    // CreateTask a tenant model
     $tenant = new Tenant();
     $tenant->id = (string) Str::ulid();
     $tenant->data = [

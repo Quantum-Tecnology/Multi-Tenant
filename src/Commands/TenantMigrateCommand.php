@@ -17,9 +17,9 @@ use QuantumTecnology\Tenant\Jobs\RollbackBatchJob;
 use QuantumTecnology\Tenant\Models\Tenant;
 use Throwable;
 
-final class MigrateCommand extends Command
+final class TenantMigrateCommand extends Command
 {
-    protected $signature = 'tenants:migrate
+    protected $signature = 'quantum:tenant-migrate
                             {--tenant_id= : Specific tenant ID (optional)}
                             {--fresh : Run migrate:fresh for each tenant}
                             {--seed : Run seeders after migrate for each tenant}';

@@ -10,6 +10,8 @@ final class Tenant extends \QuantumTecnology\Tenant\Models\Tenant
     {
         return [
             'id',
+            'name',
+            'domain',
         ];
     }
 }
