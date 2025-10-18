@@ -8,6 +8,6 @@ trait CentraConnection
 {
     public function getConnectionName(): string
     {
-        return env('DB_CONNECTION');
+        return 'central';
     }
 }

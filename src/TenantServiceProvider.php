@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace QuantumTecnology\Tenant;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use QuantumTecnology\Tenant\Contracts\TenantConnectionResolver;
@@ -23,7 +23,6 @@ final class TenantServiceProvider extends ServiceProvider
         $this->app->singletonIf(TenantConnectionResolver::class, DefaultTenantConnectionResolver::class);
         $this->app->singletonIf(TenantEnvironmentApplier::class, DefaultTenantEnvironmentApplier::class);
 
-        // Allow users to override the resolver binding in a higher-priority provider if needed
         $this->app->singletonIf(TenantManager::class, fn ($app): TenantManager => new TenantManager(
             app(TenantConnectionResolver::class),
             app(TenantEnvironmentApplier::class)
@@ -43,19 +42,16 @@ final class TenantServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // TODO: This is not working when using begin / transaction in the database
+        $this->configureCentral();
         $this->configurePayloadJob();
     }
 
     protected function configurePayloadJob(): void
     {
-        // Injetar tenant_id no payload
         Queue::createPayloadUsing(function ($connection, $queue, array $payload): array {
             if ($tenant = tenant()) {
                 $payload['tenant_id'] = $tenant->id;
             }
-
-            // app(TenantManager::class)->disconnect();
 
             return $payload;
         });
@@ -72,30 +68,13 @@ final class TenantServiceProvider extends ServiceProvider
                 }
             }
         });
+    }
 
-        //        app(QueueManager::class)->before(function ($event): void {
-        //            app(TenantManager::class)->disconnect();
-        //
-        //            $payload = $event->job?->payload();
-        //            $tenant = $payload['tenant_id'] ?? null;
-        //
-        //            tenantLogAndPrint(json_encode($payload));
-        //
-        //            if (isset($payload['data']['command']) && blank($tenant)) {
-        //                $command = unserialize($payload['data']['command']);
-        //
-        //                tenantLogAndPrint(json_encode($command));
-        //                if (isset($command->tenantId)) {
-        //                    $tenant = $command->tenantId;
-        //                }
-        //            }
-        //
-        //            if ($tenant) {
-        //                $model = config('tenant.model.tenant');
-        //                $tenant = $model::query()->find($payload['tenant_id']);
-        //                app(TenantManager::class)->switchTo($tenant);
-        //            }
-        //        });
+    protected function configureCentral(): void
+    {
+        if (blank(config('database.connections.central'))) {
+            Config::set('database.connections.central', config('database.connections.'.config('database.default')));
+        }
     }
 
     private function configurePublishers(): void
