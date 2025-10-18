@@ -13,7 +13,7 @@ final class IdentifyTenantMiddleware
     public function handle($request, Closure $next)
     {
         $domain = $request->getHost();
-        $tenant = Tenant::query()->where('domain', $domain)->first();
+        $tenant = Tenant::query()->where('domain', $domain)->firstOrFail();
 
         abort_unless((bool) $tenant, 404, 'Tenant not found.');
 

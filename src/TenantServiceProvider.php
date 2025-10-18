@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use QuantumTecnology\Tenant\Contracts\TenantConnectionResolver;
 use QuantumTecnology\Tenant\Contracts\TenantEnvironmentResolver;
+use QuantumTecnology\Tenant\Contracts\TenantQueueResolver;
 use QuantumTecnology\Tenant\Contracts\UniqueIdentifierInterface;
 use QuantumTecnology\Tenant\Support\TenantConnectionApply;
 use QuantumTecnology\Tenant\Support\TenantEnvironmentApply;
 use QuantumTecnology\Tenant\Support\TenantManager;
+use QuantumTecnology\Tenant\Support\TenantQueueApply;
 
 final class TenantServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ final class TenantServiceProvider extends ServiceProvider
     {
         $this->app->singletonIf(TenantConnectionResolver::class, TenantConnectionApply::class);
         $this->app->singletonIf(TenantEnvironmentResolver::class, TenantEnvironmentApply::class);
+        $this->app->singletonIf(TenantQueueResolver::class, TenantQueueApply::class);
 
         $this->app->singletonIf(TenantManager::class, fn ($app): TenantManager => new TenantManager());
 

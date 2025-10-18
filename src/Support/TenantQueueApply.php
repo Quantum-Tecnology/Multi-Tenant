@@ -12,7 +12,7 @@ final class TenantQueueApply implements TenantQueueResolver
     public function buildConnectionConfig(string $connect): void
     {
         Config::set([
-            'queue.database.connection' => env('DB_QUEUE_CONNECTION', 'central'),
+            'queue.connections.database.connection' => env('DB_QUEUE_CONNECTION', 'central'),
             'queue.batching.database' => 'central',
         ]);
     }
