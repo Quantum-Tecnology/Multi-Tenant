@@ -19,8 +19,8 @@ final class TenantManager
 
     public function __construct(
         public ?TenantConnectionResolver $resolver = null,
+        public ?TenantEnvironmentResolver $environment = null,
         public ?TenantQueueResolver $queue = null,
-        public ?TenantEnvironmentResolver $environment = null
     ) {
         $this->originalDefault = config('database.default');
 
