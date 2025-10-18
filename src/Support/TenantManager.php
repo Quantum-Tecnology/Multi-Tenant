@@ -33,7 +33,7 @@ final class TenantManager
         }
 
         if (blank($this->queue)) {
-            $this->queue = app(TenantQueueApply::class);
+            $this->queue = app(TenantQueueResolver::class);
         }
     }
 
