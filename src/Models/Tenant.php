@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace QuantumTecnology\Tenant\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use QuantumTecnology\Tenant\Models\Concerns\CentraConnection;
+use QuantumTecnology\Tenant\Models\Concerns\CentralConnection;
 use QuantumTecnology\Tenant\Models\Concerns\GeneratesIds;
 use Stancl\VirtualColumn\VirtualColumn;
 
 class Tenant extends Model
 {
-    use CentraConnection, GeneratesIds, VirtualColumn;
+    use CentralConnection, GeneratesIds, VirtualColumn;
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $table = 'tenants';

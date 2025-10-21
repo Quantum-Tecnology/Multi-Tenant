@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace QuantumTecnology\Tenant\Models\Concerns;
 
-trait CentraConnection
+trait CentralConnection
 {
     public function getConnectionName(): string
     {

@@ -323,11 +323,11 @@ if ($tenant = tenant()) {
 For models that must always use the central connection, you can use the provided trait:
 
 ```php
-use QuantumTecnology\Tenant\Models\Concerns\CentraConnection; // central connection alias
+use QuantumTecnology\Tenant\Models\Concerns\CentralConnection; // central connection alias
 
 class AuditLog extends Model
 {
-    use CentraConnection; // forces connection name 'central'
+    use CentralConnection; // forces connection name 'central'
 }
 ```
 
