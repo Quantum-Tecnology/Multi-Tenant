@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Brain\Customer\Processes\CreateCustomer;
+use App\Brain\Customer\Processes\CreateCustomerProcess;
 use App\Jobs\Test\BatchJob;
 use App\Jobs\Test\SimpleJob;
 use App\Models\Customer;
@@ -22,7 +22,9 @@ Route::get('/job-1', function (): string {
 });
 
 Route::get('/brain', function (): string {
-    CreateCustomer::dispatch();
+    CreateCustomerProcess::dispatch([
+        'name' => 'Customer via Brain: '.now()->toDateTimeString(),
+    ]);
 
     return 'oi';
 });

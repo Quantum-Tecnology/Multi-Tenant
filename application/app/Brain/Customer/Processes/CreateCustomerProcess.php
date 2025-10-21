@@ -9,7 +9,7 @@ use App\Brain\Customer\Tasks\CreateTask;
 use App\Brain\Customer\Tasks\CustomerJobTask;
 use Brain\Process;
 
-class CreateCustomer extends Process
+class CreateCustomerProcess extends Process
 {
     protected array $tasks = [
         CreateTask::class,
