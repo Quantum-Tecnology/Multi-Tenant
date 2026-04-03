@@ -6,8 +6,8 @@
   "description": "Service Basics Extension",
   "require": {
     "php": "^8.2",
-    "illuminate/container": "^10.0|^11.0|^12.0",
-    "illuminate/database": "^10.0|^11.0|^12.0",
+    "illuminate/container": "^10.0|^11.0|^12.0|^13.0",
+    "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
     "stancl/virtualcolumn": "^1.5"
   },
   "require-dev": {
